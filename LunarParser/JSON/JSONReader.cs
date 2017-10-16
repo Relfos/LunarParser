@@ -9,7 +9,7 @@ namespace LunarParser.JSON
         {
             Type,
             Name,
-            Collon,
+            Colon,
             Value,
             Next
         }
@@ -114,7 +114,7 @@ namespace LunarParser.JSON
                                         else
                                         {
                                             mode = InputMode.None;
-                                            state = State.Collon;
+                                            state = State.Colon;
                                         }
                                         break;
                                     }
@@ -135,7 +135,7 @@ namespace LunarParser.JSON
                             break;
                         }
 
-                    case State.Collon:
+                    case State.Colon:
                         {
                             switch (c)
                             {
