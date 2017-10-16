@@ -46,7 +46,7 @@ Here's some examples.
 // reading XML
 var root = XMLReader.ReadFromString("<message><content>Hello world!</content></message>");
 var msg = root["message"];
-var content = msg["content"];
+var content = msg.GetString("content");
 Console.WriteLine("Message: " + content);
 ```
 
@@ -54,7 +54,7 @@ Console.WriteLine("Message: " + content);
 // reading JSON
 var root = JSONReader.ReadFromString("{\"message\": { \"content\": \"Hello world!\" } }");
 var msg = root["message"];
-var content = msg["content"];
+var content = msg.GetString("content");
 Console.WriteLine("Message: " + content);
 ```
 
