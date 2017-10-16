@@ -84,6 +84,7 @@ dic = data.ToDictionary();
 
 Lunar Parser supports reading and writing data nodes in a custom binary format.
 This format will preserve the tree structure and node values, same as in XML and JSON formats, however it is much faster to parse and write and the file size is smaller.
+Very useful to send data in a tree format over a network connection.
 
 # Contact
 
