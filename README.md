@@ -66,6 +66,11 @@ dic["dog"] = "barf";
 dic["cat"] = "meow";
 dic["fish"] = "blublu";
 var data = dic.ToDataSource(dic);
+
+foreach (var child in data.Children) {
+	Console.WriteLine(child.Name + " = " + child.Value);
+}
+
 var xml = XMLWriter.WriteToString(msg);
 Console.WriteLine("XML: " + xml);
 
