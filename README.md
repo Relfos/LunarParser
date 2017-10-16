@@ -26,6 +26,12 @@ LunarParser supports:
 - JSON
 - BIN (custom format)
 
+## TODO
+
+- Rewrite XML parser (more clean code + support for comment tags)
+- Add Unit tests and sample projects
+- Support for C# dynamic?
+
 # Usage
 
 Import the package:
@@ -58,6 +64,7 @@ var msg = DataSource.CreateObject("message");
 msg.AddField("content", "Hello world!");
 var xml = XMLWriter.WriteToString(msg);
 Console.WriteLine("XML: " + xml);
+System.IO.File.WriteAllText("hello.xml", xml);
 ```
 
 ```c#
@@ -83,7 +90,9 @@ dic = data.ToDictionary();
 # Binary format
 
 Lunar Parser supports reading and writing data nodes in a custom binary format.
+
 This format will preserve the tree structure and node values, same as in XML and JSON formats, however it is much faster to parse and write and the file size is smaller.
+
 Very useful to send data in a tree format over a network connection.
 
 # Contact
