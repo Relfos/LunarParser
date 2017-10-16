@@ -35,6 +35,11 @@ namespace LunarParser
             this.Value = value;
         }
 
+        public DataNode this[string name]
+        {
+            get { return GetNode(name); }
+        }
+
         public static DataNode CreateObject(string name)
         {
             return new DataNode(NodeKind.Object, name);
