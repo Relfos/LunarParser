@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace LunarParser.JSON
 {
@@ -40,8 +41,8 @@ namespace LunarParser.JSON
             char c;
             var mode = InputMode.None;
 
-            string name_content = "";
-            string value_content = "";
+            StringBuilder name_content = new StringBuilder();
+            StringBuilder value_content = new StringBuilder();
 
             int rewind_index = index;
 
@@ -108,7 +109,7 @@ namespace LunarParser.JSON
                                         if (mode == InputMode.None)
                                         {
                                             mode = InputMode.Text;
-                                            name_content = "";
+                                            name_content.Length = 0;
                                         }
                                         else
                                         {
@@ -122,7 +123,7 @@ namespace LunarParser.JSON
                                     {
                                         if (mode == InputMode.Text)
                                         {
-                                            name_content += c;
+                                            name_content.Append(c);
                                         }
                                         else
                                         {
@@ -161,12 +162,12 @@ namespace LunarParser.JSON
                                         if (mode == InputMode.None)
                                         {
                                             mode = InputMode.Text;
-                                            value_content = "";
+                                            value_content.Length = 0;
                                         }
                                         else
                                         {
                                             mode = InputMode.None;
-                                            result.AddField(name_content, value_content);
+                                            result.AddField(name_content.ToString(), value_content.ToString());
                                             state = State.Next;
                                         }
                                         break;
@@ -176,7 +177,7 @@ namespace LunarParser.JSON
                                 case '{':
                                     {
                                         index = rewind_index;
-                                        var node = ReadNode(contents, ref index, name_content);
+                                        var node = ReadNode(contents, ref index, name_content.ToString());
                                         result.AddNode(node);
 
                                         state = State.Next;
@@ -187,25 +188,25 @@ namespace LunarParser.JSON
                                     {
                                         if (mode == InputMode.Text)
                                         {
-                                            value_content += c;
+                                            value_content.Append(c);
                                         }
                                         else
                                         if (char.IsNumber(c))
                                         {
                                             if (mode != InputMode.Number)
                                             {
-                                                value_content = "";
+                                                value_content.Length = 0;
                                                 mode = InputMode.Number;
                                             }
 
-                                            value_content += c;
+                                            value_content.Append(c);
                                         }
                                         else
                                         {
                                             if (mode == InputMode.Number)
                                             {
                                                 mode = InputMode.None;
-                                                result.AddField(name_content, value_content);
+                                                result.AddField(name_content.ToString(), value_content.ToString());
                                                 state = State.Next;
 
                                                 if (c == ',')
