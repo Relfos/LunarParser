@@ -67,7 +67,7 @@ namespace LunarParser
             return node;
         }
 
-        public void AddField(string name, object value)
+        public DataNode AddField(string name, object value)
         {
             if (this.Kind != NodeKind.Object)
             {
@@ -76,6 +76,7 @@ namespace LunarParser
 
             var child = new DataNode(NodeKind.Field, name, value.ToString());
             this.AddNode(child);
+            return child;
         }
 
         public bool HasNode(string name, int index = 0)

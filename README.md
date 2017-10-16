@@ -24,6 +24,7 @@ LunarParser supports:
 
 - XML
 - JSON
+- BIN (custom format)
 
 # Usage
 
@@ -78,6 +79,11 @@ Console.WriteLine("XML: " + xml);
 // you can also do the opposite...
 dic = data.ToDictionary();
 ```
+
+# Binary format
+
+Lunar Parser supports reading and writing data nodes in a custom binary format.
+This format will preserve the tree structure and node values, same as in XML and JSON formats, however it is much faster to parse and write and the file size is smaller.
 
 # Contact
 
