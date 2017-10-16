@@ -21,6 +21,8 @@ namespace LunarParser
 
         public int ChildCount { get { return _children.Count; } }
 
+        public bool HasChildren { get { return _children.Count > 0; } }
+
         public string Name { get; private set; }
         public string Value { get; set; }
         public NodeKind Kind { get; private set; }
