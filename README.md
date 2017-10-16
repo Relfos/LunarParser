@@ -62,13 +62,14 @@ Console.WriteLine("Message: " + content);
 // writing XML (same could be done for json, using JSONWriter)
 var msg = DataSource.CreateObject("message");
 msg.AddField("content", "Hello world!");
+
 var xml = XMLWriter.WriteToString(msg);
 Console.WriteLine("XML: " + xml);
 System.IO.File.WriteAllText("hello.xml", xml);
 ```
 
 ```c#
-// converting a dictionary to XML (same could be done for json, using JSONWriter)
+// converting a dictionary to XML
 var dic = new Dictionary<string, string>();
 dic["dog"] = "barf";
 dic["cat"] = "meow";
@@ -80,6 +81,7 @@ foreach (var child in data.Children) {
 	Console.WriteLine(child.Name + " = " + child.Value);
 }
 
+//same could be done for json, using JSONWriter
 var xml = XMLWriter.WriteToString(msg);
 Console.WriteLine("XML: " + xml);
 
