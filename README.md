@@ -40,7 +40,7 @@ Console.WriteLine("Message: " + content);
 
 ```c#
 // reading JSON
-var root = XMLReader.ReadFromString("{\"message\": { \"content\": \"Hello world!\" } }");
+var root = JSONReader.ReadFromString("{\"message\": { \"content\": \"Hello world!\" } }");
 var msg = root.GetNode("message");
 var content = msg.GetString("content");
 Console.WriteLine("Message: " + content);
