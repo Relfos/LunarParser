@@ -4,7 +4,10 @@ namespace LunarParser
 {
     public static class DataNodeUtils
     {
-        public static DataNode FromDictionary(this Dictionary<string, string> dic, string name)
+        /// <summary>
+        /// Converts a dictionary to a DataSource
+        /// </summary>
+        public static DataNode ToDataSource(this Dictionary<string, string> dic, string name)
         {
             if (dic == null)
             {
@@ -19,6 +22,9 @@ namespace LunarParser
             return node;
         }
 
+        /// <summary>
+        /// Converts a DataSource to a Dictionary
+        /// </summary>
         public static Dictionary<string, string> ToDictionary(this DataNode node, string name)
         {
             if (node == null)
@@ -29,7 +35,10 @@ namespace LunarParser
             var result = new Dictionary<string, string>();
             foreach (var child in node.Children)
             {
-                result[child.Name] = child.Value;
+                if (!string.IsNullOrEmpty(child.Value))
+                {
+                    result[child.Name] = child.Value;
+                }
             }
             return result;
         }

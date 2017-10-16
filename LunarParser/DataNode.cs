@@ -49,7 +49,8 @@ namespace LunarParser
             {
                 return Name;
             }
-            return "[Null]";
+
+            return this.Parent != null ? "[Node]" : "[Root]";
         }
 
         public DataNode AddNode(DataNode node)
@@ -102,7 +103,7 @@ namespace LunarParser
             return null;
         }
 
-        public long ReadLong(string name, long defaultValue = 0)
+        public long GetLong(string name, long defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
@@ -116,7 +117,7 @@ namespace LunarParser
         }
 
 
-        public int ReadInt32(string name, int defaultValue = 0)
+        public int GetInt32(string name, int defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
@@ -129,7 +130,7 @@ namespace LunarParser
             return defaultValue;
         }
 
-        public uint ReadUInt32(string name, uint defaultValue = 0)
+        public uint GetUInt32(string name, uint defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
@@ -143,7 +144,7 @@ namespace LunarParser
         }
 
 
-        public byte ReadByte(string name, byte defaultValue = 0)
+        public byte GetByte(string name, byte defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
@@ -156,7 +157,7 @@ namespace LunarParser
             return defaultValue;
         }
 
-        public sbyte ReadSByte(string name, sbyte defaultValue = 0)
+        public sbyte GetSByte(string name, sbyte defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
@@ -169,7 +170,7 @@ namespace LunarParser
             return defaultValue;
         }
 
-        public T ReadEnum<T>(string name, T defaultValue = default(T)) where T : IConvertible
+        public T GetEnum<T>(string name, T defaultValue = default(T)) where T : IConvertible
         {
             DataNode node = this.GetNode(name);
             if (node != null)
@@ -182,7 +183,7 @@ namespace LunarParser
             return defaultValue;
         }
 
-        public bool ReadBoolean(string name, bool defaultValue = false)
+        public bool GetBool(string name, bool defaultValue = false)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
@@ -193,7 +194,7 @@ namespace LunarParser
             return defaultValue;
         }
 
-        public Decimal ReadDecimal(string name, decimal defaultValue = 0)
+        public Decimal GetDecimal(string name, decimal defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
@@ -208,7 +209,7 @@ namespace LunarParser
             return defaultValue;
         }
 
-        public float ReadFloat(string name, float defaultValue = 0)
+        public float GetFloat(string name, float defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
@@ -223,17 +224,12 @@ namespace LunarParser
             return defaultValue;
         }
 
-        public string ReadString(string name, string defaultValue = "", bool tryParent = false)
+        public string GetString(string name, string defaultValue = "")
         {
             DataNode node = this.GetNode(name);
             if (node != null)
             {
                 return node.Value;
-            }
-
-            if (tryParent && Parent != null)
-            {
-                return Parent.ReadString(name, defaultValue, true);
             }
 
             return defaultValue;
