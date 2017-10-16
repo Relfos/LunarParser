@@ -1,3 +1,6 @@
 LunarParser/obj/
 LunarParser/bin/
 .vs/
+Tests/bin/
+Tests/obj/
+packages/

@@ -26,12 +26,6 @@ LunarParser supports:
 - JSON
 - BIN (custom format)
 
-## TODO
-
-- Rewrite XML parser (more clean code + support for comment tags)
-- Add Unit tests and sample projects
-- Support for C# dynamic?
-
 # Usage
 
 Import the package:
@@ -69,7 +63,7 @@ System.IO.File.WriteAllText("hello.xml", xml);
 ```
 
 ```c#
-// converting a dictionary to XML
+// converting a dictionary to a data node
 var dic = new Dictionary<string, string>();
 dic["dog"] = "barf";
 dic["cat"] = "meow";
