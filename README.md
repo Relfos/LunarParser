@@ -7,7 +7,7 @@ XML/JSON parsers for C#
 
 # Getting Started
 
-LunarSharp supports:
+LunarParser supports:
 
 - .NET Core
 - .NET Framework 3.5 and above
