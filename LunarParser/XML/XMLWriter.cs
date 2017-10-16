@@ -16,9 +16,9 @@ namespace LunarParser.XML
             return builder.ToString();
         }
 
-		private static void WriteNode(StringBuilder buffer, DataNode node, int tabs)
-		{
-			for (int i=0; i< tabs; i++)
+        private static void WriteNode(StringBuilder buffer, DataNode node, int tabs)
+        {
+            for (int i = 0; i < tabs; i++)
             {
                 buffer.Append('\t');
             }
@@ -45,12 +45,12 @@ namespace LunarParser.XML
                 cs++;
             }
 
-            if (cs>0)
+            if (cs > 0)
             {
                 buffer.Append(' ');
             }
 
-            if (cc==0)
+            if (cc == 0)
             {
                 buffer.Append('/');
             }
