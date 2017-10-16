@@ -20,9 +20,9 @@ namespace LunarParser.XML
 		{
 			for (int i=0; i< tabs; i++)
             {
-                buffer.Append("\t");
+                buffer.Append('\t');
             }
-            buffer.Append("<");
+            buffer.Append('<');
             buffer.Append(node.Name);
 
             int cc = 0;
@@ -35,25 +35,27 @@ namespace LunarParser.XML
                     continue;
                 }
 
-                buffer.Append(" ");
+                buffer.Append(' ');
                 buffer.Append(child.Name);
-                buffer.Append("=\"");
+                buffer.Append('=');
+                buffer.Append('"');
                 buffer.Append(child.Value);
-                buffer.Append("\"");
+                buffer.Append('"');
 
                 cs++;
             }
 
             if (cs>0)
             {
-                buffer.Append(" ");
+                buffer.Append(' ');
             }
 
             if (cc==0)
             {
-                buffer.Append("/");
+                buffer.Append('/');
             }
-            buffer.AppendLine(">");
+            buffer.Append('>');
+            buffer.AppendLine();
 
             if (cc == 0)
             {
@@ -73,12 +75,14 @@ namespace LunarParser.XML
 
             for (int i = 0; i < tabs; i++)
             {
-                buffer.Append("\t");
+                buffer.Append('\t');
             }
 
-            buffer.Append("</");
+            buffer.Append('<');
+            buffer.Append('/');
             buffer.Append(node.Name);
-            buffer.AppendLine(">");
+            buffer.Append('>');
+            buffer.AppendLine();
         }
 
     }

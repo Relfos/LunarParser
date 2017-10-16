@@ -67,6 +67,7 @@ dic["cat"] = "meow";
 dic["fish"] = "blublu";
 var data = dic.ToDataSource(dic);
 
+// its also easy to iterate on child nodes
 foreach (var child in data.Children) {
 	Console.WriteLine(child.Name + " = " + child.Value);
 }
