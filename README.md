@@ -45,16 +45,16 @@ Here's some examples.
 ```c#
 // reading XML
 var root = XMLReader.ReadFromString("<message><content>Hello world!</content></message>");
-var msg = root.GetNode("message");
-var content = msg.GetString("content");
+var msg = root["message"];
+var content = msg["content"];
 Console.WriteLine("Message: " + content);
 ```
 
 ```c#
 // reading JSON
 var root = JSONReader.ReadFromString("{\"message\": { \"content\": \"Hello world!\" } }");
-var msg = root.GetNode("message");
-var content = msg.GetString("content");
+var msg = root["message"];
+var content = msg["content"];
 Console.WriteLine("Message: " + content);
 ```
 

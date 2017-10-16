@@ -12,6 +12,7 @@ Create data nodes manually and serialize it back to XML/JSON.</Description>
     <RepositoryUrl>https://github.com/relfos/lunar_parser</RepositoryUrl>
     <Version>1.0.1</Version>
     <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <PackageReleaseNotes>Added Binary format</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>
