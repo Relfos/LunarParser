@@ -44,7 +44,7 @@ Import the package:
 using LunarParser;
 ```
 
-And the formats you want to use:
+And the formats you want to use, eg:
 
 ```c#
 using LunarParser.XML;
