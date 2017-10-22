@@ -98,6 +98,7 @@ dic = data.ToDictionary();
 var xml = File.ReadAllText("some_file.xml");
 var root = XMLReader.ReadFromString(content);
 var json = JSONWriter.WriteToString(root);
+```
 
 # Notes
 
