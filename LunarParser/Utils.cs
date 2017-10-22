@@ -47,10 +47,18 @@ namespace LunarParser
             return result;
         }
 
+        public static bool IsPrimitive(this Type type)
+        {
+            return type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
+                || type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong)
+                || type == typeof(float) || type == typeof(double) || type == typeof(decimal) || type == typeof(bool)
+                || type == typeof(string) || type == typeof(DateTime);
+        }
+
         /// <summary>
         /// Converts an object to a DataSource
         /// </summary>
-        public static DataNode ToDataSource(this object obj)
+        public static DataNode ToDataSource(this object obj, string name = null)
         {
             if (obj == null)
             {
@@ -62,7 +70,11 @@ namespace LunarParser
             var info = type.GetTypeInfo();
             var fields = info.DeclaredFields.Where(f => f.IsPublic);
 
-            var name = type.Name.ToLower();
+            if (name == null)
+            {
+                name = type.Name.ToLower();
+            }
+            
             var result = DataNode.CreateObject(name);
 
             foreach (var field in fields)
@@ -70,16 +82,23 @@ namespace LunarParser
                 var val = field.GetValue(obj);
                 if (val != null)
                 {
-                    var node = result.AddField(field.Name.ToLower(), val);
+                    var fieldName = field.Name.ToLower();
+                    if (field.FieldType.IsPrimitive())
+                    {
+                        result.AddField(fieldName, val);
+                    }
+                    else
+                    {
+                        var node = val.ToDataSource(fieldName);
+                        result.AddNode(node);
+                    }
+                    
                 }
             }
 
             return result;
         }
 
-        /// <summary>
-        /// Converts a DataSource to an Object
-        /// </summary>
         public static T ToObject<T>(this DataNode node)
         {
             if (node == null)
@@ -87,12 +106,23 @@ namespace LunarParser
                 return default(T);
             }
 
-            Type type = typeof(T);
+            return (T)node.ToObject(typeof(T));
+        }
 
-            var info = type.GetTypeInfo();
+        /// <summary>
+        /// Converts a DataSource to an Object
+        /// </summary>
+        public static object ToObject(this DataNode node, Type objectType)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+
+            var info = objectType.GetTypeInfo();
             var fields = info.DeclaredFields.Where(f => f.IsPublic);
 
-            var result = Activator.CreateInstance<T>();
+            var result = Activator.CreateInstance(objectType);
             // box result otherwise structs values wont update
             object obj = result;
 
@@ -104,105 +134,115 @@ namespace LunarParser
                 }
 
                 var fieldType = field.FieldType;
-                var str = node.GetString(field.Name);
 
-                #region TYPES LIST
-                if (fieldType == typeof(string))
+                if (fieldType.IsPrimitive())
                 {
-                    field.SetValue(obj, str);
+                    var str = node.GetString(field.Name);
+
+                    #region TYPES LIST
+                    if (fieldType == typeof(string))
+                    {
+                        field.SetValue(obj, str);
+                    }
+                    else
+                    if (fieldType == typeof(byte))
+                    {
+                        byte val;
+                        byte.TryParse(str, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(sbyte))
+                    {
+                        sbyte val;
+                        sbyte.TryParse(str, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(short))
+                    {
+                        short val;
+                        short.TryParse(str, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(ushort))
+                    {
+                        ushort val;
+                        ushort.TryParse(str, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(int))
+                    {
+                        int val;
+                        int.TryParse(str, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(uint))
+                    {
+                        uint val;
+                        uint.TryParse(str, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(long))
+                    {
+                        long val;
+                        long.TryParse(str, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(ulong))
+                    {
+                        ulong val;
+                        ulong.TryParse(str, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(float))
+                    {
+                        float val;
+                        float.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(double))
+                    {
+                        double val;
+                        double.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(decimal))
+                    {
+                        decimal val;
+                        decimal.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    if (fieldType == typeof(bool))
+                    {
+                        bool val;
+                        bool.TryParse(str, out val);
+                        field.SetValue(obj, val);
+                    }
+                    else
+                    {
+                        throw new Exception("Cannot unserialize field of type " + objectType.Name);
+                    }
+                    #endregion
                 }
                 else
-                if (fieldType == typeof(byte))
                 {
-                    byte val;
-                    byte.TryParse(str, out val);
+                    var valNode = node.GetNode(field.Name);
+                    object val = valNode.ToObject(fieldType);
                     field.SetValue(obj, val);
                 }
-                else
-                if (fieldType == typeof(sbyte))
-                {
-                    sbyte val;
-                    sbyte.TryParse(str, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(short))
-                {
-                    short val;
-                    short.TryParse(str, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(ushort))
-                {
-                    ushort val;
-                    ushort.TryParse(str, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(int))
-                {
-                    int val;
-                    int.TryParse(str, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(uint))
-                {
-                    uint val;
-                    uint.TryParse(str, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(long))
-                {
-                    long val;
-                    long.TryParse(str, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(ulong))
-                {
-                    ulong val;
-                    ulong.TryParse(str, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(float))
-                {
-                    float val;
-                    float.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(double))
-                {
-                    double val;
-                    double.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(decimal))
-                {
-                    decimal val;
-                    decimal.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                if (fieldType == typeof(bool))
-                {
-                    bool val;
-                    bool.TryParse(str, out val);
-                    field.SetValue(obj, val);
-                }
-                else
-                {
-                    throw new Exception("Cannot unserialize field of type " + type.Name);
-                }
-                #endregion
             }
 
-            return (T)obj;
+            return Convert.ChangeType(obj, objectType);
         }
 
     }

@@ -145,6 +145,7 @@ namespace LunarParserTests
             Assert.NotNull(root);
 
             var obj = color.ToDataSource();
+            Assert.IsTrue(obj.ChildCount == 4);
 
             root.AddNode(obj);
 
@@ -164,6 +165,53 @@ namespace LunarParserTests
             var otherColor = content.ToObject<Color>();
 
             Assert.IsTrue(otherColor.Equals(color));
+        }
+
+        private struct ColorGroup
+        {
+            public Color foreground;
+            public Color background;
+
+            public ColorGroup(Color foreground, Color background)
+            {
+                this.foreground = foreground;
+                this.background = background;
+            }
+        }
+
+
+        [Test]
+        public void TestNestedStructs()
+        {
+            var color1 = new Color(128, 200, 64, 255);
+            var color2 = new Color(230, 130, 60, 100);
+            var cgroup = new ColorGroup(color1, color2);
+
+            var root = DataNode.CreateObject("test");
+            Assert.NotNull(root);
+
+            var obj = cgroup.ToDataSource();
+            Assert.IsTrue(obj.ChildCount == 2);
+
+            root.AddNode(obj);
+
+            Assert.IsTrue(root.ChildCount == 1);
+
+            var xml = XMLWriter.WriteToString(root);
+            Assert.IsFalse(string.IsNullOrEmpty(xml));
+
+            root = XMLReader.ReadFromString(xml);
+            Assert.NotNull(root);
+            Assert.IsTrue("test".Equals(root.Name));
+
+            var content = root.GetNode("colorgroup");
+            Assert.NotNull(content);
+            Assert.IsTrue(content.ChildCount == 2);
+
+            var otherGroup = content.ToObject<ColorGroup>();
+
+            Assert.IsTrue(otherGroup.foreground.Equals(cgroup.foreground));
+            Assert.IsTrue(otherGroup.background.Equals(cgroup.background));
         }
 
     }
