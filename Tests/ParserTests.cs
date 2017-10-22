@@ -1,6 +1,7 @@
 ﻿using LunarParser;
 using LunarParser.JSON;
 using LunarParser.XML;
+using LunarParser.YAML;
 using NUnit.Framework;
 using System;
 
@@ -87,6 +88,23 @@ namespace LunarParserTests
 
             // alternate way
             msg = root.GetNode("message");
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var content = msg.GetString("content");
+            Assert.IsFalse(string.IsNullOrEmpty(content));
+
+            Assert.IsTrue(content.Equals("Hello world!"));
+        }
+
+        [Test]
+        public void TestYAMLReader()
+        {
+            var root = YAMLReader.ReadFromString("---\nmessage:\n  content: Hello world!");
+            Assert.NotNull(root);
+
+            var msg = root["message"];
             Assert.NotNull(msg);
 
             Assert.IsTrue("message".Equals(msg.Name));
