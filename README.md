@@ -1,5 +1,5 @@
 # Lunar Parser
-XML/JSON parsers for C#.
+XML/JSON/YAML parsers for C#.
 
 # Why Lunar Parser?
 There already excellent solutions for parsing JSON, XML and YAML in C#.
@@ -92,6 +92,12 @@ Console.WriteLine("XML: " + xml);
 // you can also do the opposite...
 dic = data.ToDictionary();
 ```
+
+```c#
+// Conversion between formats
+var xml = File.ReadAllText("some_file.xml");
+var root = XMLReader.ReadFromString(content);
+var json = JSONWriter.WriteToString(root);
 
 # Notes
 
