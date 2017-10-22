@@ -1,4 +1,5 @@
-﻿using LunarParser.JSON;
+﻿using LunarParser;
+using LunarParser.JSON;
 using LunarParser.XML;
 using NUnit.Framework;
 using System;
@@ -95,5 +96,29 @@ namespace LunarParserTests
 
             Assert.IsTrue(content.Equals("Hello world!"));
         }
+
+        [Test]
+        public void TestDateTime()
+        {
+            var date = DateTime.Now;
+
+            var root = DataNode.CreateObject("test");
+            Assert.NotNull(root);
+
+            root.AddField("date", date);
+
+            Assert.IsTrue(root.ChildCount == 1);
+
+            var xml = XMLWriter.WriteToString(root);
+            Assert.IsFalse(string.IsNullOrEmpty(xml));
+
+            root = XMLReader.ReadFromString(xml);
+            Assert.NotNull(root);
+            Assert.IsTrue("test".Equals(root.Name));
+
+            var otherDate = root.GetDateTime("date");
+            Assert.IsTrue(otherDate.Equals(date));           
+        }
+
     }
 }

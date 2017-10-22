@@ -83,7 +83,19 @@ Console.WriteLine("XML: " + xml);
 dic = data.ToDictionary();
 ```
 
-# Binary format
+# Notes
+
+## DateTime type
+
+Lunar Parser automatically DateTime to UNIX timestamps.
+
+So if you serialize it to JSON or XML you will find just a very long number instead of multiple fields.
+
+This saves space without losing any data down to seconds (miliseconds will be lost, any dates before UNIX epoch will be lost). 
+
+If this behavior is not suitable for your program, please compile Lunar Parser from source, with the DATETIME_AS_TIMESTAMPS conditional symbol removed.
+
+## Binary format
 
 Lunar Parser supports reading and writing data nodes in a custom binary format.
 

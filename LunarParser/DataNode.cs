@@ -1,3 +1,5 @@
+//#define DATETIME_AS_TIMESTAMPS
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -72,12 +74,27 @@ namespace LunarParser
             return node;
         }
 
+        private static readonly long epochTicks = new DateTime(1970, 1, 1).Ticks;
+
         public DataNode AddField(string name, object value)
         {
             if (this.Kind != NodeKind.Object)
             {
                 throw new Exception("The kind of this node is not 'object'!");
             }
+
+            if (value == null)
+            {
+                throw new Exception("Value for field is null!");
+            }
+
+#if DATETIME_AS_TIMESTAMPS
+            // convert dates to unix timestamps
+            if (value.GetType() == typeof(DateTime))
+            {
+                value = (((DateTime)value).Ticks - epochTicks).ToString();
+            }
+#endif
 
             var child = new DataNode(NodeKind.Field, name, value.ToString());
             this.AddNode(child);
@@ -89,6 +106,7 @@ namespace LunarParser
             return GetNode(name, index) != null;
         }
 
+        #region GET_XXX methods
         public DataNode GetNode(string name, int index = 0)
         {
             int n = 0;
@@ -101,7 +119,8 @@ namespace LunarParser
                     {
                         return child;
                     }
-                    else {
+                    else
+                    {
                         n++;
                     }
 
@@ -116,7 +135,7 @@ namespace LunarParser
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                long result = defaultValue; 
+                long result = defaultValue;
                 if (long.TryParse(node.Value, out result))
                     return result;
             }
@@ -208,7 +227,7 @@ namespace LunarParser
             if (node != null)
             {
                 decimal result = defaultValue;
-                if (decimal.TryParse(node.Value.Replace(",","."), NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out result))
+                if (decimal.TryParse(node.Value.Replace(",", "."), NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out result))
                 {
                     return result;
                 }
@@ -242,5 +261,25 @@ namespace LunarParser
 
             return defaultValue;
         }
+
+#if DATETIME_AS_TIMESTAMPS
+        public DateTime GetDateTime(string name, DateTime defaultValue = default(DateTime))
+        {
+            DataNode node = this.GetNode(name);
+            if (node != null)
+            {
+                long ticks;
+                if (long.TryParse(node.Value, out ticks))
+                {
+                    ticks += epochTicks;
+                    return new DateTime(ticks);
+                }
+            }
+
+            return defaultValue;
+        }
+#endif
+
+#endregion
     }
 }

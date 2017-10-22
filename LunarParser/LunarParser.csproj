@@ -10,10 +10,14 @@
 Create data nodes manually and serialize it back to XML/JSON.</Description>
     <PackageProjectUrl>https://github.com/relfos/lunar_parser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/relfos/lunar_parser</RepositoryUrl>
-    <Version>1.0.2</Version>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <PackageReleaseNotes>Added Binary format</PackageReleaseNotes>
-    <FileVersion>1.0.2.0</FileVersion>
+    <Version>1.0.4</Version>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <PackageReleaseNotes>Rewrite of XML parser, faster and with support for comments</PackageReleaseNotes>
+    <FileVersion>1.0.4.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_4;DATETIME_AS_TIMESTAMPS</DefineConstants>
   </PropertyGroup>
 
 </Project>
