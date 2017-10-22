@@ -56,6 +56,10 @@ namespace LunarParser
         {
             if (!string.IsNullOrEmpty(Name))
             {
+                if (ChildCount == 0)
+                {
+                    return Name + " = " + Value;
+                }
                 return Name;
             }
 
@@ -86,6 +90,11 @@ namespace LunarParser
             if (value == null)
             {
                 throw new Exception("Value for field is null!");
+            }
+
+            if (value is DataNode)
+            {
+                throw new Exception("Cannot add a node as a field!");
             }
 
 #if DATETIME_AS_TIMESTAMPS
