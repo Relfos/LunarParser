@@ -230,6 +230,22 @@ namespace LunarParser.XML
 
                                         break;
                                     }
+
+                                default:
+                                    {
+                                        if (char.IsLetter(c))
+                                        {
+                                            name_content.Length = 0;
+                                            name_content.Append(c);
+                                            state = State.AttributeName;
+                                        }
+                                        else
+                                        {
+                                            throw new Exception($"XML parsingexception at {GetPos(contents, index)}, unexpected character");
+                                        }
+
+                                        break;
+                                    }
                             }
 
                             break;
