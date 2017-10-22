@@ -70,7 +70,7 @@ namespace LunarParser
                 var val = field.GetValue(obj);
                 if (val != null)
                 {
-                    var node = result.AddField(field.Name.ToLower(), val.ToString());
+                    var node = result.AddField(field.Name.ToLower(), val);
                 }
             }
 
@@ -195,7 +195,11 @@ namespace LunarParser
                     bool.TryParse(str, out val);
                     field.SetValue(obj, val);
                 }
-#endregion
+                else
+                {
+                    throw new Exception("Cannot unserialize field of type " + type.Name);
+                }
+                #endregion
             }
 
             return (T)obj;

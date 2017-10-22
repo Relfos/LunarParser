@@ -1,11 +1,20 @@
 # Lunar Parser
 XML/JSON parsers for C#.
 
-Lunar Parser was written with the intent of making parsing of data as easy as possible.  
+# Why Lunar Parser?
+There already excellent solutions for parsing JSON and XML in C#.
+However they usually require one of the following:
+- Creating classes by hand
+- C# Dynamic feature
+- Cumbersome casting to things like Dictionary<Dictionary<string, object>>
+
+Besides that, each file format requires a different library that works in completly different way.
+
+Lunar Parser was written with the intent of making parsing of data as easy as possible and in with a way that makes possible to read or write a JSON or XML using exactly the same code for each. 
 
 Get a string and pass it to the proper parser and get data back in a tree structure.
 It's also possible to manually create your own data nodes and then serialize them into a string.
-And there's also some utility methods to convert back and forth between data nodes and string dictionaries.
+And there's also some utility methods to convert back and forth between data nodes and dictionaries, or even serialize an object to a DataNode in a generic way.
 
 ## Installation
 
