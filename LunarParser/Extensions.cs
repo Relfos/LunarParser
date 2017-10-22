@@ -47,6 +47,55 @@ namespace LunarParser
             return result;
         }
 
+        public static DataNode ToDataSource<T>(this IEnumerable<T> obj, string name)
+        {
+            var result = DataNode.CreateArray(name);
+
+            foreach (var item in obj)
+            {
+                var node = item.ToDataSource();
+                result.AddNode(node);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns an array with all objects of type T in the children of the node with specified name
+        /// </summary>
+        public static T[] ToArray<T>(this DataNode node)
+        {
+            if (node == null)
+            {
+                return new T[]{ };
+            }
+
+            var name = typeof(T).Name.ToLower();
+
+            int count = 0;
+            foreach (var child in node.Children)
+            {
+                if (child.Name.Equals(name))
+                {
+                    count++;
+                }
+            }
+
+            var result = new T[count];
+            int index = 0;
+
+            foreach (var child in node.Children)
+            {
+                if (child.Name.Equals(name))
+                {
+                    result[index] = child.ToObject<T>();
+                    index++;
+                }
+            }
+
+            return result;
+        }
+
         public static bool IsPrimitive(this Type type)
         {
             return type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)

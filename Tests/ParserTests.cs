@@ -209,6 +209,41 @@ namespace LunarParserTests
             Assert.IsTrue(otherColor.Equals(color));
         }
 
+        [Test]
+        public void TestStructArrays()
+        {
+            var red = new Color(255, 0, 0, 255);
+            var green = new Color(0, 255,  0, 255);
+            var blue = new Color(0, 0, 255, 255);
+            var white = new Color(255, 255, 255, 255);
+            var grey = new Color(128, 128, 128, 255);
+
+            var root = DataNode.CreateObject("test");
+            Assert.NotNull(root);
+
+            var colors = new Color[] { red, green, blue, white, grey };
+            var temp = colors.ToDataSource("colors");
+            Assert.NotNull(temp);
+            Assert.IsTrue(temp.ChildCount == 5);
+
+            root.AddNode(temp);
+            var xml = XMLWriter.WriteToString(root);
+
+            root = XMLReader.ReadFromString(xml);
+
+            var test = root["test"];
+            temp = test["colors"];
+
+            colors = temp.ToArray<Color>();
+            Assert.IsTrue(colors.Length == 5);
+
+            Assert.IsTrue(colors[0].Equals(red));
+            Assert.IsTrue(colors[1].Equals(green));
+            Assert.IsTrue(colors[2].Equals(blue));
+            Assert.IsTrue(colors[3].Equals(white));
+            Assert.IsTrue(colors[4].Equals(grey));
+        }
+
         private struct ColorGroup
         {
             public Color foreground;
