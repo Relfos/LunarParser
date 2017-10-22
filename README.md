@@ -103,6 +103,14 @@ This format will preserve the tree structure and node values, same as in XML and
 
 Very useful to send data in a tree format over a network connection.
 
+## Generic serialization of objects
+
+In the latest version there is ToObject() / FromDataSource extension methods that allow converting any C# object to a DataSource and back to the same object.
+
+This works by inspecting public fields with reflection. Properties are currently ignored.
+
+However note that those methods are still experimental, and currently they won't supported nested objects, but will work fine with simple structs / classes.
+
 # Contact
 
 Let me know if you find bugs or if you have suggestions to improve the code.

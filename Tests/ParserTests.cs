@@ -120,5 +120,51 @@ namespace LunarParserTests
             Assert.IsTrue(otherDate.Equals(date));           
         }
 
+        private struct Color
+        {
+            public byte R;
+            public byte G;
+            public byte B;
+            public byte A;
+
+            public Color(byte R, byte G, byte B, byte A = 255)
+            {
+                this.R = R;
+                this.G = G;
+                this.B = B;
+                this.A = A;
+            }
+        }
+
+        [Test]
+        public void TestStructs()
+        {
+            var color = new Color(128, 200, 64, 255);
+
+            var root = DataNode.CreateObject("test");
+            Assert.NotNull(root);
+
+            var obj = color.ToDataSource();
+
+            root.AddNode(obj);
+
+            Assert.IsTrue(root.ChildCount == 1);
+
+            var xml = XMLWriter.WriteToString(root);
+            Assert.IsFalse(string.IsNullOrEmpty(xml));
+
+            root = XMLReader.ReadFromString(xml);
+            Assert.NotNull(root);
+            Assert.IsTrue("test".Equals(root.Name));
+
+            var content = root.GetNode("color");
+            Assert.NotNull(content);
+            Assert.IsTrue(content.ChildCount == 4);
+
+            var otherColor = content.ToObject<Color>();
+
+            Assert.IsTrue(otherColor.Equals(color));
+        }
+
     }
 }

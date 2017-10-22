@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
+using System.Globalization;
 
 namespace LunarParser
 {
@@ -41,6 +45,160 @@ namespace LunarParser
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// Converts an object to a DataSource
+        /// </summary>
+        public static DataNode ToDataSource(this object obj)
+        {
+            if (obj == null)
+            {
+                return null;
+            }
+
+            Type type = obj.GetType();
+
+            var info = type.GetTypeInfo();
+            var fields = info.DeclaredFields.Where(f => f.IsPublic);
+
+            var name = type.Name.ToLower();
+            var result = DataNode.CreateObject(name);
+
+            foreach (var field in fields)
+            {
+                var val = field.GetValue(obj);
+                if (val != null)
+                {
+                    var node = result.AddField(field.Name.ToLower(), val.ToString());
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Converts a DataSource to an Object
+        /// </summary>
+        public static T ToObject<T>(this DataNode node)
+        {
+            if (node == null)
+            {
+                return default(T);
+            }
+
+            Type type = typeof(T);
+
+            var info = type.GetTypeInfo();
+            var fields = info.DeclaredFields.Where(f => f.IsPublic);
+
+            var result = Activator.CreateInstance<T>();
+            // box result otherwise structs values wont update
+            object obj = result;
+
+            foreach (var field in fields)
+            {
+                if (!node.HasNode(field.Name))
+                {
+                    continue;
+                }
+
+                var fieldType = field.FieldType;
+                var str = node.GetString(field.Name);
+
+                #region TYPES LIST
+                if (fieldType == typeof(string))
+                {
+                    field.SetValue(obj, str);
+                }
+                else
+                if (fieldType == typeof(byte))
+                {
+                    byte val;
+                    byte.TryParse(str, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(sbyte))
+                {
+                    sbyte val;
+                    sbyte.TryParse(str, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(short))
+                {
+                    short val;
+                    short.TryParse(str, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(ushort))
+                {
+                    ushort val;
+                    ushort.TryParse(str, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(int))
+                {
+                    int val;
+                    int.TryParse(str, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(uint))
+                {
+                    uint val;
+                    uint.TryParse(str, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(long))
+                {
+                    long val;
+                    long.TryParse(str, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(ulong))
+                {
+                    ulong val;
+                    ulong.TryParse(str, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(float))
+                {
+                    float val;
+                    float.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(double))
+                {
+                    double val;
+                    double.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(decimal))
+                {
+                    decimal val;
+                    decimal.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out val);
+                    field.SetValue(obj, val);
+                }
+                else
+                if (fieldType == typeof(bool))
+                {
+                    bool val;
+                    bool.TryParse(str, out val);
+                    field.SetValue(obj, val);
+                }
+#endregion
+            }
+
+            return (T)obj;
         }
 
     }
