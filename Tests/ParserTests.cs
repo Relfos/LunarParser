@@ -16,12 +16,16 @@ namespace LunarParserTests
         {
             var root = XMLReader.ReadFromString("<message><content>Hello world!</content></message>");
             Assert.NotNull(root);
-            Assert.IsTrue("message".Equals(root.Name));
 
-            var content = root.GetString("content");
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var content = msg.GetString("content");
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue(content.Equals("Hello world!"));
+            Assert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
@@ -29,10 +33,14 @@ namespace LunarParserTests
         {
             var root = XMLReader.ReadFromString("<?xml version=\"1.0\" encoding=\"utf-8\"?><!-- In this collection, we will keep each title \"as is\" --><videos><video><title>The Distinguished Gentleman</title><director>Jonathan Lynn</director><length>112 Minutes</length><format>DVD</format><rating>R</rating></video><video><title>Her Alibi</title><director>Bruce Beresford</director><length>94 Mins</length><format>DVD</format><rating>PG-13</rating> </video></videos>");
             Assert.NotNull(root);
-            Assert.IsTrue("videos".Equals(root.Name));
-            Assert.IsTrue(root.ChildCount.Equals(2));
 
-            var content = root.GetNode("video");
+            var videos = root["videos"];
+            Assert.NotNull(videos);
+
+            Assert.IsTrue("videos".Equals(videos.Name));
+            Assert.IsTrue(videos.ChildCount.Equals(2));
+
+            var content = videos.GetNode("video");
             Assert.NotNull(content);
             Assert.IsTrue(content.ChildCount.Equals(5));
         }
@@ -42,12 +50,17 @@ namespace LunarParserTests
         {
             var root = XMLReader.ReadFromString("<message><!--This is a comment, will be ignored--><content>Hello world!</content></message>");
             Assert.NotNull(root);
-            Assert.IsTrue("message".Equals(root.Name));
 
-            var content = root.GetString("content");
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var content = msg.GetString("content");
+
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue(content.Equals("Hello world!"));
+            Assert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
@@ -55,13 +68,17 @@ namespace LunarParserTests
         {
             var root = XMLReader.ReadFromString("<!--This is a comment, will be ignored--><message><content>Hello world!</content></message>");
             Assert.NotNull(root);
-            Assert.IsTrue("message".Equals(root.Name));
             Assert.IsTrue(root.ChildCount.Equals(1));
 
-            var content = root.GetString("content");
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var content = msg.GetString("content");
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue(content.Equals("Hello world!"));
+            Assert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
@@ -69,12 +86,15 @@ namespace LunarParserTests
         {
             var root = XMLReader.ReadFromString("<message content=\"Hello world!\"/>");
             Assert.NotNull(root);
-            Assert.IsTrue("message".Equals(root.Name));
+            var msg = root["message"];
+            Assert.NotNull(msg);
 
-            var content = root.GetString("content");
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var content = msg.GetString("content");
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue(content.Equals("Hello world!"));
+            Assert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
@@ -95,7 +115,7 @@ namespace LunarParserTests
             var content = msg.GetString("content");
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue(content.Equals("Hello world!"));
+            Assert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
@@ -112,7 +132,7 @@ namespace LunarParserTests
             var content = msg.GetString("content");
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue(content.Equals("Hello world!"));
+            Assert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
@@ -132,9 +152,11 @@ namespace LunarParserTests
 
             root = XMLReader.ReadFromString(xml);
             Assert.NotNull(root);
-            Assert.IsTrue("test".Equals(root.Name));
 
-            var otherDate = root.GetDateTime("date");
+            var test = root.GetNode("test");
+            Assert.IsTrue("test".Equals(test.Name));
+
+            var otherDate = test.GetDateTime("date");
             Assert.IsTrue(otherDate.Equals(date));           
         }
 
@@ -174,9 +196,11 @@ namespace LunarParserTests
 
             root = XMLReader.ReadFromString(xml);
             Assert.NotNull(root);
-            Assert.IsTrue("test".Equals(root.Name));
 
-            var content = root.GetNode("color");
+            var test = root.GetNode("test");
+            Assert.IsTrue("test".Equals(test.Name));
+
+            var content = test.GetNode("color");
             Assert.NotNull(content);
             Assert.IsTrue(content.ChildCount == 4);
 
@@ -220,9 +244,11 @@ namespace LunarParserTests
 
             root = XMLReader.ReadFromString(xml);
             Assert.NotNull(root);
-            Assert.IsTrue("test".Equals(root.Name));
 
-            var content = root.GetNode("colorgroup");
+            var test = root.GetNode("test");
+            Assert.IsTrue("test".Equals(test.Name));
+
+            var content = test.GetNode("colorgroup");
             Assert.NotNull(content);
             Assert.IsTrue(content.ChildCount == 2);
 
@@ -230,6 +256,25 @@ namespace LunarParserTests
 
             Assert.IsTrue(otherGroup.foreground.Equals(cgroup.foreground));
             Assert.IsTrue(otherGroup.background.Equals(cgroup.background));
+        }
+
+        [Test]
+        public void TestAutoDetection()
+        {
+            var xml = "<message><content>Hello world!</content></message>";
+            var json = "{\"message\": { \"content\": \"Hello world!\"} }";
+            var yaml = "---\nmessage:\n  content: Hello world!";
+
+            DataFormat format;
+
+            format = DataFormats.DetectFormat(xml);
+            Assert.IsTrue(format.Equals(DataFormat.XML));
+
+            format = DataFormats.DetectFormat(json);
+            Assert.IsTrue(format.Equals(DataFormat.JSON));
+
+            format = DataFormats.DetectFormat(yaml);
+            Assert.IsTrue(format.Equals(DataFormat.YAML));
         }
 
     }

@@ -98,13 +98,19 @@ dic = data.ToDictionary();
 var xml = File.ReadAllText("some_file.xml");
 var root = XMLReader.ReadFromString(content);
 var json = JSONWriter.WriteToString(root);
+
+//OR
+
+// content type is auto-detected based on extension
+var root = DataFormats.LoadFromFile("some_file.xml"); 
+DataFormats.WriteToFile("some_file.json", root);
 ```
 
 # Notes
 
 ## DateTime type
 
-Lunar Parser automatically DateTime to UNIX timestamps.
+Lunar Parser automatically converts DateTime to UNIX timestamps (and does the opposite when loading).
 
 So if you serialize it to JSON or XML you will find just a very long number instead of multiple fields.
 

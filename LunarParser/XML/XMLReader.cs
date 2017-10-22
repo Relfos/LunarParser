@@ -22,7 +22,9 @@ namespace LunarParser.XML
         public static DataNode ReadFromString(string contents)
         {
             int index = 0;
-            var root = ReadNode(contents, ref index);
+            var first = ReadNode(contents, ref index);
+            var root = DataNode.CreateObject(null);
+            root.AddNode(first);
             return root;
         }
 
