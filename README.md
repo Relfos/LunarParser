@@ -2,7 +2,7 @@
 XML/JSON parsers for C#.
 
 # Why Lunar Parser?
-There already excellent solutions for parsing JSON and XML in C#.
+There already excellent solutions for parsing JSON, XML and YAML in C#.
 However they usually require one of the following:
 - Creating classes by hand
 - C# Dynamic feature
@@ -33,6 +33,7 @@ LunarParser supports:
 
 - XML
 - JSON
+- YAML
 - BIN (custom format)
 
 # Usage
@@ -62,7 +63,7 @@ Console.WriteLine("Message: " + content);
 ```
 
 ```c#
-// writing XML (same could be done for json, using JSONWriter)
+// writing XML (same could be done for json, using JSONWriter or yaml with YAMLWriter)
 var msg = DataSource.CreateObject("message");
 msg.AddField("content", "Hello world!");
 
