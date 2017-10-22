@@ -44,6 +44,12 @@ Import the package:
 using LunarParser;
 ```
 
+And the formats you want to use:
+
+```c#
+using LunarParser.XML;
+```
+
 Here's some examples.
 
 ```c#
