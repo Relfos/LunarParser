@@ -119,6 +119,31 @@ namespace LunarParserTests
         }
 
         [Test]
+        public void TestJSONArray()
+        {
+            var root = JSONReader.ReadFromString("{\"message\": { \"content\": [0, 1, 2, 3]} }");
+            Assert.NotNull(root);
+
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            // alternate way
+            msg = root.GetNode("message");
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var content = msg["content"];
+            Assert.IsTrue(content.ChildCount == 4);
+
+            for (int i=0; i<4; i++)
+            {
+                var number = content.GetNodeByIndex(i);
+                Assert.IsTrue(i.ToString().Equals(number.Value));
+            }            
+        }
+
+        [Test]
         public void TestYAMLReader()
         {
             var root = YAMLReader.ReadFromString("---\nmessage:\n  content: Hello world!");

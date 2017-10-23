@@ -82,7 +82,7 @@ namespace LunarParser
 
         public DataNode AddField(string name, object value)
         {
-            if (this.Kind != NodeKind.Object)
+            if (this.Kind == NodeKind.Field)
             {
                 throw new Exception("The kind of this node is not 'object'!");
             }
@@ -139,6 +139,16 @@ namespace LunarParser
             return null;
         }
 
+        public DataNode GetNodeByIndex(int index)
+        {
+            if (index < 0 || index >= _children.Count)
+            {
+                return null;
+            }
+
+            return _children[index];
+        }
+
         public long GetLong(string name, long defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
@@ -178,7 +188,6 @@ namespace LunarParser
 
             return defaultValue;
         }
-
 
         public byte GetByte(string name, byte defaultValue = 0)
         {

@@ -33,6 +33,27 @@ namespace LunarParser.JSON
             return "offset " + index;
         }
 
+        private static void ReadString(string target, string contents, ref int index)
+        {
+            index--;
+            for (int i=0; i<target.Length; i++)
+            {
+                if (index >= contents.Length)
+                {
+                    throw new Exception($"JSON parsing exception, unexpected end of data");
+                }
+
+                var c = contents[index];
+                
+                if (c != target[i])
+                {
+                    throw new Exception($"JSON parsing exception, unexpected character");
+                }
+
+                index++;               
+            }
+        }
+
         private static DataNode ReadNode(string contents, ref int index, string name)
         {
             DataNode result = null;
@@ -45,6 +66,8 @@ namespace LunarParser.JSON
             StringBuilder value_content = new StringBuilder();
 
             int rewind_index = index;
+
+            bool is_escaped = false;
 
             do
             {
@@ -86,8 +109,8 @@ namespace LunarParser.JSON
 
                                 case '[':
                                     {
-                                        result = DataNode.CreateObject(name);
-                                        state = State.Name;
+                                        result = DataNode.CreateArray(name);
+                                        state = State.Value;
                                         break;
                                     }
 
@@ -155,6 +178,62 @@ namespace LunarParser.JSON
 
                     case State.Value:
                         {
+                            if (c == '\\' && !is_escaped)
+                            {
+                                is_escaped = true;
+                            }
+                            else
+                            if (is_escaped)
+                            {
+                                is_escaped = false;
+
+                                if (c == 'u')
+                                {
+                                    var hex = "";
+                                    for (int i=0; i<4; i++)
+                                    {
+                                        if (index >= contents.Length)
+                                        {
+                                            throw new Exception($"JSON parsing exception, unexpected end of data");
+                                        }
+                                        hex += contents[index]; index++;
+                                    }
+                                    
+                                    ushort unicode_val;
+                                    unicode_val = ushort.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+
+                                    c = (char)unicode_val;
+                                }
+
+                                value_content.Append(c);                                
+                            }
+                            else
+                            if (c == 'n' && mode == InputMode.None)
+                            {
+                                ReadString("null", contents, ref index);
+                                result.AddField(name_content.ToString(), "");
+                                state = State.Next;
+                            }
+                            else
+                            if (c == 'f' && mode == InputMode.None)
+                            {
+                                ReadString("false", contents, ref index);
+                                result.AddField(name_content.ToString(), "false");
+                                state = State.Next;
+                            }
+                            else
+                            if (c == 't' && mode == InputMode.None)
+                            {
+                                ReadString("true", contents, ref index);
+                                result.AddField(name_content.ToString(), "true");
+                                state = State.Next;                            
+                            }
+                            else
+                            if (c == ']' && mode == InputMode.None && result.Kind == NodeKind.Array)
+                            {
+                                return result;
+                            }
+                            else
                             switch (c)
                             {
                                 case '"':
@@ -209,7 +288,7 @@ namespace LunarParser.JSON
                                                 result.AddField(name_content.ToString(), value_content.ToString());
                                                 state = State.Next;
 
-                                                if (c == ',')
+                                                if (c == ',' || c == ']')
                                                 {
                                                     index = rewind_index;
                                                 }
@@ -232,7 +311,7 @@ namespace LunarParser.JSON
                             {
                                 case ',':
                                     {
-                                        state = State.Name;
+                                        state = result.Kind == NodeKind.Array ? State.Value: State.Name;
                                         break;
                                     }
 
