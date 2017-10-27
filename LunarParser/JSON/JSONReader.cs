@@ -265,7 +265,7 @@ namespace LunarParser.JSON
                                             value_content.Append(c);
                                         }
                                         else
-                                        if (char.IsNumber(c))
+                                        if (char.IsNumber(c) || (mode == InputMode.Number && c =='.'))
                                         {
                                             if (mode != InputMode.Number)
                                             {

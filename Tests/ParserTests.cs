@@ -119,10 +119,35 @@ namespace LunarParserTests
         }
 
         [Test]
-        public void TestJSONArray()
+        public void TestJSONTypes()
         {
-            var root = JSONReader.ReadFromString(System.IO.File.ReadAllText(@"D:\code\neo-lux\neo-lux-demo\bin\Debug\request.json"));
-         //   var root = JSONReader.ReadFromString("{\"message\": { \"content\": [0, 1, 2, 3]} }");
+            var root = JSONReader.ReadFromString("{\"message\": { \"number\": 3.14159, \"check\":true, \"item\": null} }");
+            Assert.NotNull(root);
+
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            // alternate way
+            msg = root.GetNode("message");
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var number = msg.GetFloat("number");
+            Assert.IsTrue(Math.Abs(number - 3.14159) < 0.001f);
+
+            var check = msg.GetBool("check");
+            Assert.IsTrue(check);
+
+            var item = msg.GetNode("item");
+            Assert.IsNotNull(item);
+            Assert.IsTrue(string.IsNullOrEmpty(item.Value));
+        }
+
+        [Test]
+        public void TestJSONArray()
+        {            
+            var root = JSONReader.ReadFromString("{\"message\": { \"content\": [0, 1, 2, 3]} }");
             Assert.NotNull(root);
 
             var msg = root["message"];
