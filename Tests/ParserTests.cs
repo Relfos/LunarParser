@@ -121,7 +121,8 @@ namespace LunarParserTests
         [Test]
         public void TestJSONArray()
         {
-            var root = JSONReader.ReadFromString("{\"message\": { \"content\": [0, 1, 2, 3]} }");
+            var root = JSONReader.ReadFromString(System.IO.File.ReadAllText(@"D:\code\neo-lux\neo-lux-demo\bin\Debug\request.json"));
+         //   var root = JSONReader.ReadFromString("{\"message\": { \"content\": [0, 1, 2, 3]} }");
             Assert.NotNull(root);
 
             var msg = root["message"];

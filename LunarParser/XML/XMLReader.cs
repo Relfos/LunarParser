@@ -28,11 +28,6 @@ namespace LunarParser.XML
             return root;
         }
 
-        private static string GetPos(string contents, int index)
-        {
-            return "offset " + index;
-        }
-
         private static DataNode ReadNode(string contents, ref int index)
         {
             DataNode result = null;
@@ -87,7 +82,7 @@ namespace LunarParser.XML
 
                                 default:
                                     {
-                                        throw new Exception($"XML parsingexception at {GetPos(contents, index)}, unexpected character");
+                                        throw new Exception($"XML parsingexception at {ParserUtils.GetOffsetError(contents, index)}, unexpected character");
                                     }
                             }
                             break;
@@ -186,7 +181,7 @@ namespace LunarParser.XML
                             }
                             else
                             {
-                                throw new Exception($"XML parsingexception at {GetPos(contents, index)}, unexpected character");
+                                throw new Exception($"XML parsingexception at {ParserUtils.GetOffsetError(contents, index)}, unexpected character");
                             }
                             break;
                         }
@@ -243,7 +238,7 @@ namespace LunarParser.XML
                                         }
                                         else
                                         {
-                                            throw new Exception($"XML parsingexception at {GetPos(contents, index)}, unexpected character");
+                                            throw new Exception($"XML parsingexception at {ParserUtils.GetOffsetError(contents, index)}, unexpected character");
                                         }
 
                                         break;

@@ -33,12 +33,7 @@ namespace LunarParser.YAML
 
             return root;
         }
-
-        private static string GetPos(string contents, int index)
-        {
-            return "offset " + index;
-        }
-
+        
         private static void ReadNodes(string[] lines, ref int index, int baseIndents, DataNode parent)
         {
             int expectedIdents = -1;

@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFramework>netstandard1.3</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Sergio Flores</Authors>
     <Company>Lunar Labs</Company>
     <Product>Lunar Parser</Product>
-    <Description>Read data from strings in XML/JSON formats into a tree structure. 
-Create data nodes manually and serialize it back to XML/JSON.</Description>
+    <Description>Read data from strings in XML/JSON/YAML formats into a tree structure. 
+Create data nodes manually and serialize it back to XML/JSON/YAML.</Description>
     <PackageProjectUrl>https://github.com/relfos/lunar_parser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/relfos/lunar_parser</RepositoryUrl>
-    <Version>1.0.7</Version>
-    <AssemblyVersion>1.0.7.0</AssemblyVersion>
-    <PackageReleaseNotes>Rewrite of XML parser, faster and with support for comments</PackageReleaseNotes>
-    <FileVersion>1.0.7.0</FileVersion>
+    <Version>1.0.8</Version>
+    <AssemblyVersion>1.0.8.0</AssemblyVersion>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <FileVersion>1.0.8.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

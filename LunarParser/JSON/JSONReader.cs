@@ -28,11 +28,6 @@ namespace LunarParser.JSON
             return root;
         }
 
-        private static string GetPos(string contents, int index)
-        {
-            return "offset " + index;
-        }
-
         private static void ReadString(string target, string contents, ref int index)
         {
             index--;
@@ -117,7 +112,7 @@ namespace LunarParser.JSON
 
                                 default:
                                     {
-                                        throw new Exception($"JSON parsing exception at {GetPos(contents, index)}, unexpected character");
+                                        throw new Exception($"JSON parsing exception at {ParserUtils.GetOffsetError(contents, index)}, unexpected character");
                                     }
                             }
                             break;
@@ -150,7 +145,7 @@ namespace LunarParser.JSON
                                         }
                                         else
                                         {
-                                            throw new Exception($"JSON parsing exception at {GetPos(contents, index)}, unexpected character");
+                                            throw new Exception($"JSON parsing exception at {ParserUtils.GetOffsetError(contents, index)}, unexpected character");
                                         }
                                         break;
                                     }
@@ -170,7 +165,7 @@ namespace LunarParser.JSON
 
                                 default:
                                     {
-                                        throw new Exception($"JSON parsing exception at {GetPos(contents, index)}, expected collon");
+                                        throw new Exception($"JSON parsing exception at {ParserUtils.GetOffsetError(contents, index)}, expected collon");
                                     }
                             }
                             break;
@@ -295,7 +290,7 @@ namespace LunarParser.JSON
                                             }
                                             else
                                             {
-                                                throw new Exception($"JSON parsing exception at {GetPos(contents, index)}, unexpected character");
+                                                throw new Exception($"JSON parsing exception at {ParserUtils.GetOffsetError(contents, index)}, unexpected character");
                                             }
 
                                         }
@@ -319,7 +314,7 @@ namespace LunarParser.JSON
                                     {
                                         if (result.Kind != NodeKind.Object)
                                         {
-                                            throw new Exception($"JSON parsing exception at {GetPos(contents, index)}, unexpected }}");
+                                            throw new Exception($"JSON parsing exception at {ParserUtils.GetOffsetError(contents, index)}, unexpected }}");
                                         }
 
                                         return result;
@@ -329,7 +324,7 @@ namespace LunarParser.JSON
                                     {
                                         if (result.Kind != NodeKind.Array)
                                         {
-                                            throw new Exception($"JSON parsing exception at {GetPos(contents, index)}, unexpected ]");
+                                            throw new Exception($"JSON parsing exception at {ParserUtils.GetOffsetError(contents, index)}, unexpected ]");
                                         }
 
                                         return result;
@@ -337,7 +332,7 @@ namespace LunarParser.JSON
 
                                 default:
                                     {
-                                        throw new Exception($"JSON parsing exception at {GetPos(contents, index)}, expected collon");
+                                        throw new Exception($"JSON parsing exception at {ParserUtils.GetOffsetError(contents, index)}, expected collon");
                                     }
                             }
                             break;
