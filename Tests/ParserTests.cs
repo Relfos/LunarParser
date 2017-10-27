@@ -1,4 +1,5 @@
 ﻿using LunarParser;
+using LunarParser.CSV;
 using LunarParser.JSON;
 using LunarParser.XML;
 using LunarParser.YAML;
@@ -184,6 +185,43 @@ namespace LunarParserTests
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
             Assert.IsTrue("Hello world!".Equals(content));
+        }
+
+        private struct Animal
+        {
+            public int id;
+            public string name;
+        }
+
+        [Test]
+        public void TestCSVReader()
+        {
+            var csv = "id,name\n1,Dog\n2,\"The \"\"Mr\"\"Cat\"\n399,\"Fish,Blue\"\n412,\"Heavy Bird\"";
+            var root = CSVReader.ReadFromString(csv);
+            Assert.NotNull(root);
+
+            Assert.IsTrue(root.ChildCount == 4);
+
+            var animals = root.ToArray<Animal>();
+            Assert.IsTrue(animals.Length == 4);
+
+            Animal animal;
+
+            animal = animals[0];
+            Assert.IsTrue(1.Equals(animal.id));
+            Assert.IsTrue("Dog".Equals(animal.name));
+
+            animal = animals[1];
+            Assert.IsTrue(2.Equals(animal.id));
+            Assert.IsTrue("The \"Mr\"Cat".Equals(animal.name));
+
+            animal = animals[2];
+            Assert.IsTrue(399.Equals(animal.id));
+            Assert.IsTrue("Fish,Blue".Equals(animal.name));
+
+            animal = animals[3];
+            Assert.IsTrue(412.Equals(animal.id));
+            Assert.IsTrue("Heavy Bird".Equals(animal.name));
         }
 
         [Test]

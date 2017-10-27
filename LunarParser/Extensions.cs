@@ -75,7 +75,7 @@ namespace LunarParser
             int count = 0;
             foreach (var child in node.Children)
             {
-                if (child.Name.Equals(name))
+                if (child.Name == null || child.Name.Equals(name))
                 {
                     count++;
                 }
@@ -86,7 +86,7 @@ namespace LunarParser
 
             foreach (var child in node.Children)
             {
-                if (child.Name.Equals(name))
+                if (child.Name == null || child.Name.Equals(name))
                 {
                     result[index] = child.ToObject<T>();
                     index++;

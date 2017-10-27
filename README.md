@@ -1,5 +1,5 @@
 # Lunar Parser
-XML/JSON/YAML parsers for C#.
+XML/JSON/YAML/CSV parsers for C#.
 
 # Why Lunar Parser?
 There already excellent solutions for parsing JSON, XML and YAML in C#.
@@ -36,6 +36,7 @@ LunarParser supports:
 - XML
 - JSON
 - YAML
+- CSV
 - BIN (custom format)
 
 # Usage
@@ -141,6 +142,10 @@ In the latest version there is ToObject() / FromDataSource extension methods tha
 This works by inspecting public fields with reflection. Properties are currently ignored.
 
 However note that those methods are still experimental, and currently they won't supported nested objects, but will work fine with simple structs / classes.
+
+## CSV format
+
+The CSV format can not handle nested nodes. This is a limitation of the format itself, so be careful if converting from other formats to CSV.
 
 # Contact
 

@@ -4,7 +4,8 @@ using LunarParser.XML;
 using LunarParser.JSON;
 using LunarParser.YAML;
 using LunarParser.Binary;
-
+using LunarParser.CSV;
+using System;
 
 namespace LunarParser
 {
@@ -15,6 +16,7 @@ namespace LunarParser
         XML,
         JSON,
         YAML,
+        CSV,
     }
 
     public static class DataFormats
@@ -26,6 +28,7 @@ namespace LunarParser
                 case ".xml": return DataFormat.XML;
                 case ".json": return DataFormat.JSON;
                 case ".yaml": return DataFormat.YAML;
+                case ".csv": return DataFormat.CSV;
                 case ".bin": return DataFormat.BIN;
 
                 default:
@@ -68,6 +71,7 @@ namespace LunarParser
                 case DataFormat.XML: return XMLReader.ReadFromString(contents);
                 case DataFormat.JSON: return JSONReader.ReadFromString(contents);
                 case DataFormat.YAML: return YAMLReader.ReadFromString(contents);
+                case DataFormat.CSV: return CSVReader.ReadFromString(contents);
                 default:
                     {
                         throw new System.Exception("Format not supported");
@@ -82,6 +86,7 @@ namespace LunarParser
                 case DataFormat.XML: return XMLWriter.WriteToString(root);
                 case DataFormat.JSON: return JSONWriter.WriteToString(root);
                 case DataFormat.YAML: return YAMLWriter.WriteToString(root);
+                case DataFormat.CSV: return CSVWriter.WriteToString(root);
                 default:
                     {
                         throw new System.Exception("Format not supported");
@@ -120,6 +125,11 @@ namespace LunarParser
             if (format == DataFormat.Unknown)
             {
                 format = DetectFormat(contents);
+
+                if (format == DataFormat.Unknown)
+                {
+                    throw new Exception("Could not detect format for " + fileName);
+                }
             }
 
             return LoadFromString(format, contents);
