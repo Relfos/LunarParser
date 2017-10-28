@@ -54,13 +54,10 @@ namespace LunarParserTests
 
             var msg = root["message"];
             Assert.NotNull(msg);
-
             Assert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.GetString("content");
-
             Assert.IsFalse(string.IsNullOrEmpty(content));
-
             Assert.IsTrue("Hello world!".Equals(content));
         }
 
@@ -92,9 +89,9 @@ namespace LunarParserTests
             Assert.NotNull(root);
             msg = root["message"];
             Assert.NotNull(msg);
-            Assert.IsTrue("aaa".Equals(msg.Value));
+            Assert.AreEqual("aaa", msg.Value);
 
-            root = XMLReader.ReadFromString("<message><!----></message>");
+            root = XMLReader.ReadFromString("<message><!--aa--></message>");
             Assert.NotNull(root);
             msg = root["message"];
             Assert.NotNull(msg);
@@ -116,7 +113,7 @@ namespace LunarParserTests
             Assert.IsTrue("message".Equals(msg.Name));
             var content = msg.GetString("content");
             Assert.IsFalse(string.IsNullOrEmpty(content));
-            Assert.IsTrue("Hello world!".Equals(content));
+            Assert.AreEqual("Hello world!", content);
         }
 
         // Not strictly valid in XML, but accepted in HTML and others
@@ -129,16 +126,17 @@ namespace LunarParserTests
             Assert.NotNull(root);
             var msg = root["message"];
             Assert.NotNull(msg);
-            Assert.IsTrue("message".Equals(msg.Name));
+            Assert.AreEqual("message", msg.Name);
             var content = msg.GetString("content");
             Assert.IsFalse(string.IsNullOrEmpty(content));
-            Assert.IsTrue("Hello world!".Equals(content));
+            Assert.AreEqual("Hello world!", content.Trim());
         }
 
         [Test]
         public void TestXMLProlog()
         {
-            var root = XMLReader.ReadFromString("<!--This is a comment, will be ignored--><message><content>Hello world!</content></message>");
+            var root = XMLReader.ReadFromString("<!--This is a comment, will be ignored--><message>" +
+                                                "<content>Hello world!</content></message>");
             Assert.NotNull(root);
             Assert.IsTrue(root.ChildCount.Equals(1));
 

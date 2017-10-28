@@ -8,7 +8,8 @@ namespace LunarParser.XML
         private enum State
         {
             Next,
-            Name,
+            TagOpen,
+            TagClose,
             Prolog,
             Comment,
             AttributeName,
@@ -17,7 +18,6 @@ namespace LunarParser.XML
             NextAttribute,
             Content,
         }
-
 
         public static DataNode ReadFromString(string contents)
         {
@@ -33,6 +33,7 @@ namespace LunarParser.XML
             DataNode result = null;
 
             var state = State.Next;
+            var prevState = State.Next;
             char c;
 
             StringBuilder name_content = new StringBuilder();
@@ -44,12 +45,15 @@ namespace LunarParser.XML
             {
                 bool isWhiteSpace;
                 bool next = false;
-                bool inside = state == State.Content || state == State.Name || state == State.AttributeName || state == State.AttributeValue;
+                bool inside = state == State.Content || state == State.TagOpen || state == State.TagClose ||
+                              state == State.AttributeName || state == State.AttributeValue;
 
                 do
                 {
                     if (index >= contents.Length)
                     {
+                        if (state == State.Next) // no useful data
+                            return null;
                         throw new Exception($"XML parsing exception, unexpected end of data");
                     }
 
@@ -62,8 +66,6 @@ namespace LunarParser.XML
                     }
 
                     index++;
-
-
                     next = isWhiteSpace && !inside;
                 } while (next);
 
@@ -74,8 +76,8 @@ namespace LunarParser.XML
                             switch (c)
                             {
                                 case '<':
-                                    {                                        
-                                        state = State.Name;
+                                    {
+                                        state = State.TagOpen;
                                         name_content.Length = 0;
                                         break;
                                     }
@@ -88,7 +90,7 @@ namespace LunarParser.XML
                             break;
                         }
 
-                    case State.Name:
+                    case State.TagOpen:
                         {
                             switch (c)
                             {
@@ -110,6 +112,7 @@ namespace LunarParser.XML
                                         if (index< contents.Length-3 && contents[index - 2] == '<' && contents[index] == '-' && contents[index+1] == '-')
                                         {
                                             state = State.Comment;
+                                            prevState = State.Next;
                                         }
                                         else
                                         {
@@ -120,18 +123,14 @@ namespace LunarParser.XML
 
                                 case '/':
                                     {
+                                        result = DataNode.CreateObject(name_content.ToString());
+                                        state = State.TagClose;
                                         break;
                                     }
 
                                 case '>':
                                     {
                                         result = DataNode.CreateObject(name_content.ToString());
-
-                                        if (contents[index-2] == '/')
-                                        {
-                                            return result;
-                                        }
-
                                         state = State.Content;
                                         break;
                                     }
@@ -147,6 +146,26 @@ namespace LunarParser.XML
                                 default:
                                     {
                                         name_content.Append(c);
+                                        break;
+                                    }
+                            }
+                            break;
+                        }
+
+                    case State.TagClose:
+                        {
+                            switch (c)
+                            {
+                                case '>':
+                                    {
+                                        // previously created:
+                                        // result = DataNode.CreateObject(name_content.ToString());
+                                        return result;
+                                    }
+                                default:
+                                    {
+                                        // TODO: verify that the close tag matches the open tag
+                                        // name_content.Append(c);
                                         break;
                                     }
                             }
@@ -265,7 +284,7 @@ namespace LunarParser.XML
                                     {
                                         if (contents[index - 2] == '-' && contents[index - 3] == '-')
                                         {
-                                            state = State.Next;
+                                            state = prevState;
                                         }
                                         break;
                                     }
@@ -281,13 +300,21 @@ namespace LunarParser.XML
                                     {
                                         if (index<contents.Length && contents[index] == '/')
                                         {
-                                            result.Value = value_content.ToString();
-                                            return result;
+                                            state = State.TagClose;
+                                            result.Value += value_content.ToString();
+                                        }
+                                        else if (index< contents.Length-3 && contents[index] == '!' && contents[index+1] == '-' && contents[index+2] == '-')
+                                        {
+                                            state = State.Comment;
+                                            prevState = State.Content;
+                                            index += 2;
                                         }
                                         else
                                         {
                                             index--;
                                             var child = ReadNode(contents, ref index);
+                                            if (child == null) // only valid at top-level. Here must be an input error
+                                                 throw new Exception("XML parsing exception, unexpected end of data");
                                             result.AddNode(child);
                                         }
                                         break;
@@ -301,9 +328,6 @@ namespace LunarParser.XML
                             }
                             break;
                         }
-
-
-
                 }
 
             } while (true);
