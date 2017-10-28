@@ -179,6 +179,16 @@ namespace LunarParser
             return _children[index];
         }
 
+        public T GetEnumValue<T>(string value, T defaultValue = default(T)) where T : IConvertible
+        {
+            try {
+                return (T)Enum.Parse(typeof(T), GetString(value), /* ignorecase */ true);
+            }
+            catch (Exception) {
+                return defaultValue; // 0
+            }
+        }
+
         public long GetLong(string name, long defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
@@ -191,7 +201,6 @@ namespace LunarParser
 
             return defaultValue;
         }
-
 
         public int GetInt32(string name, int defaultValue = 0)
         {
