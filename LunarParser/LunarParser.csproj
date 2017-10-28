@@ -6,14 +6,14 @@
     <Authors>Sergio Flores</Authors>
     <Company>Lunar Labs</Company>
     <Product>Lunar Parser</Product>
-    <Description>Read data from strings in XML/JSON/YAML formats into a tree structure. 
-Create data nodes manually and serialize it back to XML/JSON/YAML.</Description>
+    <Description>Read data from strings in XML/JSON/YAML/CSV formats into a tree structure. 
+Create data nodes manually and serialize it back to those formats.</Description>
     <PackageProjectUrl>https://github.com/relfos/lunar_parser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/relfos/lunar_parser</RepositoryUrl>
-    <Version>1.0.8</Version>
-    <AssemblyVersion>1.0.8.0</AssemblyVersion>
+    <Version>1.0.9</Version>
+    <AssemblyVersion>1.0.9.0</AssemblyVersion>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <FileVersion>1.0.8.0</FileVersion>
+    <FileVersion>1.0.9.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
