@@ -116,6 +116,36 @@ namespace LunarParser
         }
 
         #region GET_XXX methods
+        // internal auxiliary
+        private DataNode FindNode(string name, int ndepth, int maxdepth)
+        {
+            if (String.Compare(this.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return this;
+            }
+
+            if (ndepth >= maxdepth)
+            {
+                return null;
+            }
+
+            foreach (DataNode child in _children)
+            {
+                DataNode n = child.FindNode(name, ndepth + 1, maxdepth);
+                if (n != null)
+                {
+                    return n;
+                }
+            }
+
+            return null;
+        }
+
+        public DataNode FindNode(string name, int maxdepth = 0)
+        {
+            return FindNode(name, 0, maxdepth > 0? maxdepth : int.MaxValue );
+        }
+
         public DataNode GetNode(string name, int index = 0)
         {
             int n = 0;

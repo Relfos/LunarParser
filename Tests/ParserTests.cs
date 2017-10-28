@@ -383,6 +383,21 @@ namespace LunarParserTests
         }
 
         [Test]
+        public void TestFindNodes()
+        {
+            var root = JSONReader.ReadFromString("{\"root\": { \"number\": 3.14159, \"check\":true, \"item\": {\"base\": \"found me\"} } }");
+            Assert.NotNull(root);
+            var msg = root["root"];
+            Assert.NotNull(msg);
+
+            // alternate way
+            var child = root.FindNode("base");
+            Assert.NotNull(child);
+            Assert.AreEqual("base", child.Name);
+            Assert.AreEqual("found me", child.Value);
+        }
+
+        [Test]
         public void TestAutoDetection()
         {
             var xml = "<message><content>Hello world!</content></message>";
