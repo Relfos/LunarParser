@@ -65,6 +65,77 @@ namespace LunarParserTests
         }
 
         [Test]
+        public void TestXMLEmpty()
+        {
+            var root = XMLReader.ReadFromString("");
+            Assert.True(root.ChildCount.Equals(0));
+            root = XMLReader.ReadFromString("    ");
+            Assert.True(root.ChildCount.Equals(0));
+            root = XMLReader.ReadFromString("<!---->");
+            Assert.True(root.ChildCount.Equals(0));
+            root = XMLReader.ReadFromString("<!-- nsbdghfds <msg>hello</msg> fdgf -->");
+            Assert.True(root.ChildCount.Equals(0));
+            root = XMLReader.ReadFromString("<!-- <aa /> -->");
+            Assert.True(root.ChildCount.Equals(0));
+        }
+
+        [Test]
+        public void TestXMLRoot()
+        {
+            var root = XMLReader.ReadFromString("<message></message>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+            Assert.IsEmpty(msg.Value);
+
+            root = XMLReader.ReadFromString("<message>aaa</message>");
+            Assert.NotNull(root);
+            msg = root["message"];
+            Assert.NotNull(msg);
+            Assert.IsTrue("aaa".Equals(msg.Value));
+
+            root = XMLReader.ReadFromString("<message><!----></message>");
+            Assert.NotNull(root);
+            msg = root["message"];
+            Assert.NotNull(msg);
+            Assert.IsEmpty(msg.Value);
+        }
+
+        // Valid in XML
+        [Test]
+        public void TestXMLCommentsTags()
+        {
+            var root = XMLReader.ReadFromString("<message><!-- will - - <- be ignored-->" +
+                                                "<!--df <! - - </ m\"es\"sage > dd=\"aa\" -->" +
+                                                "<content>Hello world!</content>" +
+                                                "<!-- df <!- - </message> --> </message>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+            var content = msg.GetString("content");
+            Assert.IsFalse(string.IsNullOrEmpty(content));
+            Assert.IsTrue("Hello world!".Equals(content));
+        }
+
+        // Not strictly valid in XML, but accepted in HTML and others
+        [Test]
+        public void TestXMLCommentsUnbalanced()
+        {
+            var root = XMLReader.ReadFromString("<message><!-- will <-- be ignored-->" +
+                                                "<content> <!--df \" \" <!-- </ message > --> " +
+                                                "Hello world!</content></message>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+            Assert.IsTrue("message".Equals(msg.Name));
+            var content = msg.GetString("content");
+            Assert.IsFalse(string.IsNullOrEmpty(content));
+            Assert.IsTrue("Hello world!".Equals(content));
+        }
+
+        [Test]
         public void TestXMLProlog()
         {
             var root = XMLReader.ReadFromString("<!--This is a comment, will be ignored--><message><content>Hello world!</content></message>");
@@ -96,6 +167,22 @@ namespace LunarParserTests
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
             Assert.IsTrue("Hello world!".Equals(content));
+        }
+
+        [Test]
+        public void TestXMLAttributesIgnored()
+        {
+            var root = XMLReader.ReadFromString("<message content=\"Hello /> world!\"/>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var content = msg.GetString("content");
+            Assert.IsFalse(string.IsNullOrEmpty(content));
+
+            Assert.IsTrue("Hello /> world!".Equals(content));
         }
 
         [Test]
@@ -344,7 +431,6 @@ namespace LunarParserTests
                 this.background = background;
             }
         }
-
 
         [Test]
         public void TestNestedStructs()
