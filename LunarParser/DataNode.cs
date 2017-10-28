@@ -116,6 +116,36 @@ namespace LunarParser
         }
 
         #region GET_XXX methods
+        // internal auxiliary
+        private DataNode FindNode(string name, int ndepth, int maxdepth)
+        {
+            if (String.Compare(this.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return this;
+            }
+
+            if (ndepth >= maxdepth)
+            {
+                return null;
+            }
+
+            foreach (DataNode child in _children)
+            {
+                DataNode n = child.FindNode(name, ndepth + 1, maxdepth);
+                if (n != null)
+                {
+                    return n;
+                }
+            }
+
+            return null;
+        }
+
+        public DataNode FindNode(string name, int maxdepth = 0)
+        {
+            return FindNode(name, 0, maxdepth > 0? maxdepth : int.MaxValue );
+        }
+
         public DataNode GetNode(string name, int index = 0)
         {
             int n = 0;
@@ -149,6 +179,16 @@ namespace LunarParser
             return _children[index];
         }
 
+        public T GetEnumValue<T>(string value, T defaultValue = default(T)) where T : IConvertible
+        {
+            try {
+                return (T)Enum.Parse(typeof(T), GetString(value), /* ignorecase */ true);
+            }
+            catch (Exception) {
+                return defaultValue; // 0
+            }
+        }
+
         public long GetLong(string name, long defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
@@ -161,7 +201,6 @@ namespace LunarParser
 
             return defaultValue;
         }
-
 
         public int GetInt32(string name, int defaultValue = 0)
         {

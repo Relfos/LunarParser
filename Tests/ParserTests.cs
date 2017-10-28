@@ -54,20 +54,89 @@ namespace LunarParserTests
 
             var msg = root["message"];
             Assert.NotNull(msg);
-
             Assert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.GetString("content");
-
             Assert.IsFalse(string.IsNullOrEmpty(content));
-
             Assert.IsTrue("Hello world!".Equals(content));
+        }
+
+        [Test]
+        public void TestXMLEmpty()
+        {
+            var root = XMLReader.ReadFromString("");
+            Assert.True(root.ChildCount.Equals(0));
+            root = XMLReader.ReadFromString("    ");
+            Assert.True(root.ChildCount.Equals(0));
+            root = XMLReader.ReadFromString("<!---->");
+            Assert.True(root.ChildCount.Equals(0));
+            root = XMLReader.ReadFromString("<!-- nsbdghfds <msg>hello</msg> fdgf -->");
+            Assert.True(root.ChildCount.Equals(0));
+            root = XMLReader.ReadFromString("<!-- <aa /> -->");
+            Assert.True(root.ChildCount.Equals(0));
+        }
+
+        [Test]
+        public void TestXMLRoot()
+        {
+            var root = XMLReader.ReadFromString("<message></message>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+            Assert.IsEmpty(msg.Value);
+
+            root = XMLReader.ReadFromString("<message>aaa</message>");
+            Assert.NotNull(root);
+            msg = root["message"];
+            Assert.NotNull(msg);
+            Assert.AreEqual("aaa", msg.Value);
+
+            root = XMLReader.ReadFromString("<message><!--aa--></message>");
+            Assert.NotNull(root);
+            msg = root["message"];
+            Assert.NotNull(msg);
+            Assert.IsEmpty(msg.Value);
+        }
+
+        // Valid in XML
+        [Test]
+        public void TestXMLCommentsTags()
+        {
+            var root = XMLReader.ReadFromString("<message><!-- will - - <- be ignored-->" +
+                                                "<!--df <! - - </ m\"es\"sage > dd=\"aa\" -->" +
+                                                "<content>Hello world!</content>" +
+                                                "<!-- df <!- - </message> --> </message>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+            var content = msg.GetString("content");
+            Assert.IsFalse(string.IsNullOrEmpty(content));
+            Assert.AreEqual("Hello world!", content);
+        }
+
+        // Not strictly valid in XML, but accepted in HTML and others
+        [Test]
+        public void TestXMLCommentsUnbalanced()
+        {
+            var root = XMLReader.ReadFromString("<message><!-- will <-- be ignored-->" +
+                                                "<content> <!--df \" \" <!-- </ message > --> " +
+                                                "Hello world!</content></message>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+            Assert.AreEqual("message", msg.Name);
+            var content = msg.GetString("content");
+            Assert.IsFalse(string.IsNullOrEmpty(content));
+            Assert.AreEqual("Hello world!", content.Trim());
         }
 
         [Test]
         public void TestXMLProlog()
         {
-            var root = XMLReader.ReadFromString("<!--This is a comment, will be ignored--><message><content>Hello world!</content></message>");
+            var root = XMLReader.ReadFromString("<!--This is a comment, will be ignored--><message>" +
+                                                "<content>Hello world!</content></message>");
             Assert.NotNull(root);
             Assert.IsTrue(root.ChildCount.Equals(1));
 
@@ -96,6 +165,22 @@ namespace LunarParserTests
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
             Assert.IsTrue("Hello world!".Equals(content));
+        }
+
+        [Test]
+        public void TestXMLAttributesIgnored()
+        {
+            var root = XMLReader.ReadFromString("<message content=\"Hello /> world!\"/>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var content = msg.GetString("content");
+            Assert.IsFalse(string.IsNullOrEmpty(content));
+
+            Assert.IsTrue("Hello /> world!".Equals(content));
         }
 
         [Test]
@@ -345,7 +430,6 @@ namespace LunarParserTests
             }
         }
 
-
         [Test]
         public void TestNestedStructs()
         {
@@ -380,6 +464,21 @@ namespace LunarParserTests
 
             Assert.IsTrue(otherGroup.foreground.Equals(cgroup.foreground));
             Assert.IsTrue(otherGroup.background.Equals(cgroup.background));
+        }
+
+        [Test]
+        public void TestFindNodes()
+        {
+            var root = JSONReader.ReadFromString("{\"root\": { \"number\": 3.14159, \"check\":true, \"item\": {\"base\": \"found me\"} } }");
+            Assert.NotNull(root);
+            var msg = root["root"];
+            Assert.NotNull(msg);
+
+            // alternate way
+            var child = root.FindNode("base");
+            Assert.NotNull(child);
+            Assert.AreEqual("base", child.Name);
+            Assert.AreEqual("found me", child.Value);
         }
 
         [Test]
