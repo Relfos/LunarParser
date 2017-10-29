@@ -20,7 +20,7 @@ And there's also some utility methods to convert back and forth between data nod
 
     PM> Install-Package LunarParser
 
-Since this is a .NET standard package, to use with .NET framework projects please set the target as .NET Framework 4.6, otherwise Nuget will give you installation errors.
+Since this is a .NET standard package, to use with .NET framework projects please set the target to .NET Framework 4.5 or higher, otherwise Nuget will give you installation errors.
 
 # Getting Started
 
