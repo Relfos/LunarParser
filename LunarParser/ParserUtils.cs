@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LunarParser
 {
-    internal class ParserUtils
+    internal static class ParserUtils
     {
         public static void GetColumnAndLine(string text, int offset, out int col, out int line)
         {
@@ -36,6 +36,11 @@ namespace LunarParser
             GetColumnAndLine(text, offset, out col, out line);
 
             return $"at line {line}, column {col}";
+        }
+
+        public static bool IsNumeric(this string text) {
+            double val;
+            return double.TryParse(text, out val);
         }
     }
 }

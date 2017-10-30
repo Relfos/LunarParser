@@ -256,6 +256,63 @@ namespace LunarParserTests
         }
 
         [Test]
+        public void TestJSONArrayWriter()
+        {
+            var root = DataNode.CreateArray(null);
+            root.AddField(null, "hello");
+            root.AddField(null, "1");
+            root.AddField(null, "2");
+
+            var json = JSONWriter.WriteToString(root);
+            Assert.NotNull(json);
+
+            var other = JSONReader.ReadFromString(json);
+            Assert.NotNull(other);
+
+            Assert.IsTrue(other.ChildCount == root.ChildCount);
+
+            for (int i = 0; i < root.ChildCount; i++)
+            {
+                var child = root.GetNodeByIndex(i);
+                var otherChild = other.GetNodeByIndex(i);
+
+                Assert.NotNull(child);
+                Assert.NotNull(otherChild);
+
+                Assert.IsTrue(child.Name == otherChild.Name);
+                Assert.IsTrue(child.Value == otherChild.Value);
+            }
+        }
+
+        [Test]
+        public void TestJSONObjectWriter()
+        {
+            var color = new Color(200, 100, 220, 128);
+            var root = DataNode.CreateObject(null);
+            root.AddNode(color.ToDataSource());
+
+            var json = JSONWriter.WriteToString(root);
+            Assert.NotNull(json);
+
+            var other = JSONReader.ReadFromString(json);
+            Assert.NotNull(other);
+
+            Assert.IsTrue(other.ChildCount == root.ChildCount);
+
+            for (int i=0; i<root.ChildCount; i++)
+            {
+                var child = root.GetNodeByIndex(i);
+                var otherChild = other.GetNodeByIndex(i);
+
+                Assert.NotNull(child);
+                Assert.NotNull(otherChild);
+
+                Assert.IsTrue(child.Name == otherChild.Name);
+                Assert.IsTrue(child.Value == otherChild.Value);
+            }
+        }
+
+        [Test]
         public void TestYAMLReader()
         {
             var root = YAMLReader.ReadFromString("---\nmessage:\n  content: Hello world!");
@@ -498,6 +555,27 @@ namespace LunarParserTests
 
             format = DataFormats.DetectFormat(yaml);
             Assert.IsTrue(format.Equals(DataFormat.YAML));
+        }
+
+        public enum AnswerKind
+        {
+            Yes,
+            No,
+            Maybe
+        }
+
+        [Test]
+        public void TestEnumParsing()
+        {
+            var root = DataNode.CreateObject();
+            root.AddField("Answer", "Maybe");
+            root.AddField("Other", "1");
+
+            var answer = root.GetEnum<AnswerKind>("Answer");
+            Assert.IsTrue(answer == AnswerKind.Maybe);
+
+            var other = root.GetEnum<AnswerKind>("Other");
+            Assert.IsTrue(other == AnswerKind.No);
         }
 
     }

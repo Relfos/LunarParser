@@ -42,12 +42,12 @@ namespace LunarParser
             get { return GetNode(name); }
         }
 
-        public static DataNode CreateObject(string name)
+        public static DataNode CreateObject(string name = null)
         {
             return new DataNode(NodeKind.Object, name);
         }
 
-        public static DataNode CreateArray(string name)
+        public static DataNode CreateArray(string name = null)
         {
             return new DataNode(NodeKind.Array, name);
         }
@@ -250,9 +250,20 @@ namespace LunarParser
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                int result = 0;
-                if (int.TryParse(node.Value, out result))
-                    return (T)(object)result;
+
+                try
+                {
+                    return (T)Enum.Parse(typeof(T), node.Value, /* ignorecase */ true);
+                }
+                catch (Exception)
+                {
+                    int result = 0;
+                    if (int.TryParse(node.Value, out result))
+                    {
+                        return (T)(object)result;
+                    }
+                }
+
             }
 
             return defaultValue;
