@@ -17,9 +17,22 @@ namespace LunarParser.JSON
 
             if (node.Value != null)
             {
-                sb.Append("\"");
-                sb.Append(EscapeJSON(node.Value));
-                sb.Append('"');
+                var val = node.Value;
+                var isNumeric = val.IsNumeric();
+
+                bool shouldEscape = !isNumeric;
+
+                if (shouldEscape)
+                {
+                    val = EscapeJSON(val);
+                    sb.Append("\"");
+                    sb.Append(val);
+                    sb.Append('"');
+                }
+                else
+                {
+                    sb.Append(val);
+                }                
             }
             else
             {
@@ -54,9 +67,9 @@ namespace LunarParser.JSON
         public static string WriteToString(DataNode node)
         {
             var sb = new StringBuilder();
-            sb.Append('{');
+            if (node.Name != null) sb.Append('{');
             Append(node, sb);
-            sb.Append('}');
+            if (node.Name != null) sb.Append('}');
             return sb.ToString();
         }
 

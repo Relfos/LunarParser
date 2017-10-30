@@ -72,6 +72,11 @@ namespace LunarParser.JSON
                 {
                     if (index >= contents.Length)
                     {
+                        if (state == State.Next)
+                        {
+                            return result;
+                        }
+
                         throw new Exception($"JSON parsing exception, unexpected end of data");
                     }
 
@@ -206,21 +211,21 @@ namespace LunarParser.JSON
                             if (c == 'n' && mode == InputMode.None)
                             {
                                 ReadString("null", contents, ref index);
-                                result.AddField(name_content.ToString(), "");
+                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "");
                                 state = State.Next;
                             }
                             else
                             if (c == 'f' && mode == InputMode.None)
                             {
                                 ReadString("false", contents, ref index);
-                                result.AddField(name_content.ToString(), "false");
+                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "false");
                                 state = State.Next;
                             }
                             else
                             if (c == 't' && mode == InputMode.None)
                             {
                                 ReadString("true", contents, ref index);
-                                result.AddField(name_content.ToString(), "true");
+                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "true");
                                 state = State.Next;                            
                             }
                             else
@@ -241,7 +246,7 @@ namespace LunarParser.JSON
                                         else
                                         {
                                             mode = InputMode.None;
-                                            result.AddField(name_content.ToString(), value_content.ToString());
+                                            result.AddField(name_content.Length == 0 ? null: name_content.ToString(), value_content.ToString());
                                             state = State.Next;
                                         }
                                         break;
@@ -251,7 +256,7 @@ namespace LunarParser.JSON
                                 case '{':
                                     {
                                         index = rewind_index;
-                                        var node = ReadNode(contents, ref index, name_content.ToString());
+                                        var node = ReadNode(contents, ref index, name_content.Length == 0 ? null: name_content.ToString());
                                         result.AddNode(node);
 
                                         state = State.Next;
@@ -280,7 +285,7 @@ namespace LunarParser.JSON
                                             if (mode == InputMode.Number)
                                             {
                                                 mode = InputMode.None;
-                                                result.AddField(name_content.ToString(), value_content.ToString());
+                                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), value_content.ToString());
                                                 state = State.Next;
 
                                                 if (c == ',' || c == ']')
