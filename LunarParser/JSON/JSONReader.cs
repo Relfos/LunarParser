@@ -211,21 +211,21 @@ namespace LunarParser.JSON
                             if (c == 'n' && mode == InputMode.None)
                             {
                                 ReadString("null", contents, ref index);
-                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "");
+                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "", NodeKind.Null);
                                 state = State.Next;
                             }
                             else
                             if (c == 'f' && mode == InputMode.None)
                             {
                                 ReadString("false", contents, ref index);
-                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "false");
+                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "false", NodeKind.Boolean);
                                 state = State.Next;
                             }
                             else
                             if (c == 't' && mode == InputMode.None)
                             {
                                 ReadString("true", contents, ref index);
-                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "true");
+                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "true", NodeKind.Boolean);
                                 state = State.Next;                            
                             }
                             else
@@ -285,10 +285,10 @@ namespace LunarParser.JSON
                                             if (mode == InputMode.Number)
                                             {
                                                 mode = InputMode.None;
-                                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), value_content.ToString());
+                                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), value_content.ToString(), NodeKind.Numeric);
                                                 state = State.Next;
 
-                                                if (c == ',' || c == ']')
+                                                if (c == ',' || c == ']' || c == '}')
                                                 {
                                                     index = rewind_index;
                                                 }
