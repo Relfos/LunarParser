@@ -11,7 +11,10 @@ namespace LunarParser
         Unknown,
         Object,
         Array,
-        Field
+        String,
+        Numeric,
+        Boolean,
+        Null
     }
 
     public class DataNode
@@ -28,6 +31,7 @@ namespace LunarParser
         public string Name { get; private set; }
         public string Value { get; set; }
         public NodeKind Kind { get; private set; }
+
 
         private DataNode(NodeKind kind, string name = null, string value = null)
         {
@@ -80,9 +84,9 @@ namespace LunarParser
 
         private static readonly long epochTicks = new DateTime(1970, 1, 1).Ticks;
 
-        public DataNode AddField(string name, object value)
+        public DataNode AddField(string name, object value, NodeKind kind = NodeKind.String)
         {
-            if (this.Kind == NodeKind.Field)
+            if (this.Kind != NodeKind.Array && this.Kind != NodeKind.Object)
             {
                 throw new Exception("The kind of this node is not 'object'!");
             }
@@ -105,7 +109,7 @@ namespace LunarParser
             }
 #endif
 
-            var child = new DataNode(NodeKind.Field, name, value.ToString());
+            var child = new DataNode(kind, name, value.ToString());
             this.AddNode(child);
             return child;
         }

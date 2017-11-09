@@ -186,7 +186,8 @@ namespace LunarParserTests
         [Test]
         public void TestJSONReader()
         {
-            var root = JSONReader.ReadFromString("{\"message\": { \"content\": \"Hello world!\"} }");
+            var json= "{\"message\": { \"content\": \"Hello world!\"} }";
+            var root = JSONReader.ReadFromString(json);
             Assert.NotNull(root);
 
             var msg = root["message"];
@@ -221,12 +222,15 @@ namespace LunarParserTests
 
             var number = msg.GetFloat("number");
             Assert.IsTrue(Math.Abs(number - 3.14159) < 0.001f);
+            Assert.IsTrue(msg.GetNode("number").Kind == NodeKind.Numeric);
 
             var check = msg.GetBool("check");
             Assert.IsTrue(check);
+            Assert.IsTrue(msg.GetNode("check").Kind == NodeKind.Boolean);
 
             var item = msg.GetNode("item");
             Assert.IsNotNull(item);
+            Assert.IsTrue(msg.GetNode("item").Kind == NodeKind.Null);
             Assert.IsTrue(string.IsNullOrEmpty(item.Value));
         }
 
@@ -578,5 +582,6 @@ namespace LunarParserTests
             Assert.IsTrue(other == AnswerKind.No);
         }
 
+    
     }
 }
