@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
+using System.Collections;
 
 namespace LunarParser
 {
@@ -11,7 +12,7 @@ namespace LunarParser
         /// <summary>
         /// Converts a dictionary to a DataSource
         /// </summary>
-        public static DataNode ToDataSource(this Dictionary<string, string> dic, string name)
+        public static DataNode FromDictionary(this IDictionary dic, string name)
         {
             if (dic == null)
             {
@@ -19,9 +20,9 @@ namespace LunarParser
             }
 
             var node = DataNode.CreateObject(name);
-            foreach (var entry in dic)
+            foreach (var key in dic.Keys)
             {
-                node.AddField(entry.Key.ToLower(), entry.Value);
+                node.AddField(key.ToString().ToLower(), dic[key]);
             }
             return node;
         }
@@ -132,7 +133,9 @@ namespace LunarParser
                 if (val != null)
                 {
                     var fieldName = field.Name.ToLower();
-                    if (field.FieldType.IsPrimitive())
+                    var typeInfo = field.FieldType.GetTypeInfo();
+
+                    if (field.FieldType.IsPrimitive() || typeInfo.IsEnum)
                     {
                         result.AddField(fieldName, val);
                     }
