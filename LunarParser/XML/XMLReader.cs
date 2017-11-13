@@ -184,7 +184,10 @@ namespace LunarParser.XML
 
                                 default:
                                     {
-                                        name_content.Append(c);
+                                        if (name_content.Length > 0 || !char.IsWhiteSpace(c))
+                                        {
+                                            name_content.Append(c);
+                                        }
                                         break;
                                     }
                             }

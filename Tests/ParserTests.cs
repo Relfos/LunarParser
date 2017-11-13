@@ -15,7 +15,9 @@ namespace LunarParserTests
         [Test]
         public void TestXMLReader()
         {
-            var root = XMLReader.ReadFromString("<message><content>Hello world!</content></message>");
+            var xml = "<message><content>Hello world!</content></message>";
+
+            var root = XMLReader.ReadFromString(xml);
             Assert.NotNull(root);
 
             var msg = root["message"];
@@ -373,14 +375,16 @@ namespace LunarParserTests
         [Test]
         public void TestDateTime()
         {
-            var date = DateTime.Now;
+            var date = new DateTime(2017, 11, 29, 10, 30, 0);
 
             var root = DataNode.CreateObject("test");
             Assert.NotNull(root);
 
-            root.AddField("date", date);
+            root.AddField("first", date);
+            root.AddField("second", date.ToString());
+            root.AddField("third", "2017-11-29T10:30:00.000Z");
 
-            Assert.IsTrue(root.ChildCount == 1);
+            Assert.IsTrue(root.ChildCount == 3);
 
             var xml = XMLWriter.WriteToString(root);
             Assert.IsFalse(string.IsNullOrEmpty(xml));
@@ -391,8 +395,14 @@ namespace LunarParserTests
             var test = root.GetNode("test");
             Assert.IsTrue("test".Equals(test.Name));
 
-            var otherDate = test.GetDateTime("date");
-            Assert.IsTrue(otherDate.Equals(date));           
+            var first = test.GetDateTime("first");
+            Assert.IsTrue(first.Equals(date));
+
+            var second = test.GetDateTime("second");
+            Assert.IsTrue(second.Equals(date));
+
+            var third = test.GetDateTime("third");
+            Assert.IsTrue(third.Equals(date));
         }
 
         private struct Color
