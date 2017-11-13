@@ -325,23 +325,28 @@ namespace LunarParser
             return defaultValue;
         }
 
-#if DATETIME_AS_TIMESTAMPS
         public DateTime GetDateTime(string name, DateTime defaultValue = default(DateTime))
         {
             DataNode node = this.GetNode(name);
             if (node != null)
             {
+#if DATETIME_AS_TIMESTAMPS
                 long ticks;
                 if (long.TryParse(node.Value, out ticks))
                 {
                     ticks += epochTicks;
                     return new DateTime(ticks);
                 }
+#endif
+                DateTime result;
+                if (DateTime.TryParse(node.Value, out result))
+                {
+                    return result;
+                }
             }
 
             return defaultValue;
         }
-#endif
 
 #endregion
     }
