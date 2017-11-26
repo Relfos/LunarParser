@@ -186,6 +186,43 @@ namespace LunarParserTests
         }
 
         [Test]
+        public void TestXMLText()
+        {
+            var root = XMLReader.ReadFromString("<message attribute=\"something\">other</message>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var attr = msg.GetString("attribute");
+            Assert.IsTrue("something".Equals(attr));
+
+            Assert.IsTrue("other".Equals(msg.Value));
+        }
+
+        [Test]
+        public void TestXMLShortTag()
+        {
+            var root = XMLReader.ReadFromString("<message attribute=\"something\"><go /></message>");
+            Assert.NotNull(root);
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var attr = msg.GetString("attribute");
+            Assert.IsTrue("something".Equals(attr));
+
+            Assert.IsTrue(msg.ChildCount == 2);
+
+            var child = msg.GetNodeByIndex(1);
+            Assert.IsNotNull(child);
+            Assert.IsTrue("go".Equals(child.Name));
+            Assert.IsTrue(string.IsNullOrEmpty(child.Value));
+        }
+
+        [Test]
         public void TestJSONReader()
         {
             var json= "{\"message\": { \"content\": \"Hello world!\"} }";

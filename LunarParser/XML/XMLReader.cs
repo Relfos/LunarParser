@@ -176,6 +176,12 @@ namespace LunarParser.XML
                         {
                             switch (c)
                             {
+                                case '/':
+                                    {
+                                        state = State.TagClose;
+                                        break;
+                                    }
+
                                 case '=':
                                     {
                                         state = State.AttributeQuote;
@@ -215,6 +221,7 @@ namespace LunarParser.XML
                                 case '"':
                                     {
                                         result.AddField(name_content.ToString(), value_content.ToString());
+                                        value_content.Length = 0;
                                         state = State.NextAttribute;
                                         break;
                                     }
