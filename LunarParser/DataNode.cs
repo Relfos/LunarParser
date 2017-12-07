@@ -46,6 +46,11 @@ namespace LunarParser
             get { return GetNode(name); }
         }
 
+        public DataNode this[int index]
+        {
+            get { return GetNodeByIndex(index); }
+        }
+
         public static DataNode CreateObject(string name = null)
         {
             return new DataNode(NodeKind.Object, name);
@@ -109,7 +114,28 @@ namespace LunarParser
             }
 #endif
 
-            var child = new DataNode(kind, name, value.ToString());
+            string val;
+
+            if (value is float)
+            {
+                val = ((float)value).ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            if (value is double)
+            {
+                val = ((double)value).ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            if (value is decimal)
+            {
+                val = ((decimal)value).ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                val = value.ToString();
+            }
+
+            var child = new DataNode(kind, name, val);
             this.AddNode(child);
             return child;
         }
@@ -119,7 +145,6 @@ namespace LunarParser
             return GetNode(name, index) != null;
         }
 
-        #region GET_XXX methods
         // internal auxiliary
         private DataNode FindNode(string name, int ndepth, int maxdepth)
         {
@@ -147,7 +172,7 @@ namespace LunarParser
 
         public DataNode FindNode(string name, int maxdepth = 0)
         {
-            return FindNode(name, 0, maxdepth > 0? maxdepth : int.MaxValue );
+            return FindNode(name, 0, maxdepth > 0 ? maxdepth : int.MaxValue);
         }
 
 
@@ -184,15 +209,45 @@ namespace LunarParser
             return _children[index];
         }
 
+        #region LONG
+        public long AsLong(long defaultValue = 0)
+        {
+            long result = defaultValue;
+            if (long.TryParse(this.Value, out result))
+                return result;
+
+            return defaultValue;
+        }
+
         public long GetLong(string name, long defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                long result = defaultValue;
-                if (long.TryParse(node.Value, out result))
-                    return result;
+                return node.AsLong(defaultValue);
             }
+
+            return defaultValue;
+        }
+
+        public long GetLong(int index, long defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsLong(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region INT32
+        public int AsInt32(int defaultValue = 0)
+        {
+            int result = defaultValue;
+            if (int.TryParse(this.Value, out result))
+                return result;
 
             return defaultValue;
         }
@@ -202,10 +257,30 @@ namespace LunarParser
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                int result = defaultValue;
-                if (int.TryParse(node.Value, out result))
-                    return result;
+                return node.AsInt32(defaultValue);
             }
+
+            return defaultValue;
+        }
+
+        public int GetInt32(int index, int defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsInt32(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region UINT32
+        public uint AsUInt32(uint defaultValue = 0)
+        {
+            uint result = defaultValue;
+            if (uint.TryParse(this.Value, out result))
+                return result;
 
             return defaultValue;
         }
@@ -215,10 +290,19 @@ namespace LunarParser
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                uint result = defaultValue;
-                if (uint.TryParse(node.Value, out result))
-                    return result;
+                return node.AsUInt32(defaultValue);
             }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region BYTE
+        public byte AsByte(byte defaultValue = 0)
+        {
+            byte result = defaultValue;
+            if (byte.TryParse(this.Value, out result))
+                return result;
 
             return defaultValue;
         }
@@ -228,10 +312,30 @@ namespace LunarParser
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                byte result = defaultValue;
-                if (byte.TryParse(node.Value, out result))
-                    return result;
+                return node.AsByte(defaultValue);
             }
+
+            return defaultValue;
+        }
+
+        public byte GetByte(int index, byte defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsByte(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region SBYTE
+        public sbyte AsSByte(sbyte defaultValue = 0)
+        {
+            sbyte result = defaultValue;
+            if (sbyte.TryParse(this.Value, out result))
+                return result;
 
             return defaultValue;
         }
@@ -241,9 +345,38 @@ namespace LunarParser
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                sbyte result = defaultValue;
-                if (sbyte.TryParse(node.Value, out result))
-                    return result;
+                return node.AsSByte(defaultValue);
+            }
+
+            return defaultValue;
+        }
+
+        public sbyte GetSByte(int index, sbyte defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsSByte(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region ENUM
+        public T AsEnum<T>(T defaultValue = default(T)) where T : IConvertible
+        {
+            try
+            {
+                return (T)Enum.Parse(typeof(T), this.Value, /* ignorecase */ true);
+            }
+            catch (Exception)
+            {
+                int result = 0;
+                if (int.TryParse(this.Value, out result))
+                {
+                    return (T)(object)result;
+                }
             }
 
             return defaultValue;
@@ -254,20 +387,35 @@ namespace LunarParser
             DataNode node = this.GetNode(name);
             if (node != null)
             {
+                return node.AsEnum<T>(defaultValue);
+            }
 
-                try
-                {
-                    return (T)Enum.Parse(typeof(T), node.Value, /* ignorecase */ true);
-                }
-                catch (Exception)
-                {
-                    int result = 0;
-                    if (int.TryParse(node.Value, out result))
-                    {
-                        return (T)(object)result;
-                    }
-                }
+            return defaultValue;
+        }
 
+        public T GetEnum<T>(int index, T defaultValue = default(T)) where T : IConvertible
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsEnum<T>(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region BOOL
+        public bool AsBool(bool defaultValue = false)
+        {
+            if (this.Value.Equals("1") || string.Equals(this.Value, "true", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            if (this.Value.Equals("0") || string.Equals(this.Value, "false", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return false;
             }
 
             return defaultValue;
@@ -278,22 +426,31 @@ namespace LunarParser
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                return (node.Value.Equals("1") || string.Equals(node.Value, "true", StringComparison.CurrentCultureIgnoreCase));
+                return node.AsBool(defaultValue);
             }
 
             return defaultValue;
         }
 
-        public Decimal GetDecimal(string name, decimal defaultValue = 0)
+        public bool GetBool(int index, bool defaultValue = false)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByIndex(index);
             if (node != null)
             {
-                decimal result = defaultValue;
-                if (decimal.TryParse(node.Value.Replace(",", "."), NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out result))
-                {
-                    return result;
-                }
+                return node.AsBool(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region FLOAT
+        public float AsFloat(float defaultValue = 0)
+        {
+            float result = defaultValue;
+            if (float.TryParse(this.Value, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out result))
+            {
+                return result;
             }
 
             return defaultValue;
@@ -304,12 +461,99 @@ namespace LunarParser
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                float result = defaultValue;
-                if (float.TryParse(node.Value, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out result))
-                {
-                    return result;
-                }
+                return node.AsFloat(defaultValue);
             }
+
+            return defaultValue;
+        }
+
+        public float GetFloat(int index, float defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsFloat(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region DOUBLE
+        public double AsDouble(double defaultValue = 0)
+        {
+            double result = defaultValue;
+            if (double.TryParse(this.Value, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out result))
+            {
+                return result;
+            }
+
+            return defaultValue;
+        }
+
+        public double GetDouble(string name, double defaultValue = 0)
+        {
+            DataNode node = this.GetNode(name);
+            if (node != null)
+            {
+                return node.AsDouble(defaultValue);
+            }
+
+            return defaultValue;
+        }
+
+        public double GetDouble(int index, double defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsDouble(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region DECIMAL
+        public Decimal AsDecimal(decimal defaultValue = 0)
+        {
+            decimal result = defaultValue;
+            if (decimal.TryParse(this.Value, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out result))
+            {
+                return result;
+            }
+
+            return defaultValue;
+        }
+
+        public Decimal GetDecimal(string name, decimal defaultValue = 0)
+        {
+            DataNode node = this.GetNode(name);
+            if (node != null)
+            {
+                return node.AsDecimal(defaultValue);
+            }
+
+            return defaultValue;
+        }
+
+        public Decimal GetDecimal(int index, decimal defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsDecimal(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region STRING
+        public string AsString(string defaultValue = "")
+        {
+            if (this.Value != null)
+                return this.Value;
 
             return defaultValue;
         }
@@ -325,29 +569,48 @@ namespace LunarParser
             return defaultValue;
         }
 
-        public DateTime GetDateTime(string name, DateTime defaultValue = default(DateTime))
+        public string GetString(int index, string defaultValue = "")
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByIndex(index);
             if (node != null)
             {
+                return node.Value;
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region DATETIME
+        public DateTime AsDateTime(DateTime defaultValue = default(DateTime))
+        {
 #if DATETIME_AS_TIMESTAMPS
-                long ticks;
-                if (long.TryParse(node.Value, out ticks))
-                {
-                    ticks += epochTicks;
-                    return new DateTime(ticks);
-                }
+            long ticks;
+            if (long.TryParse(this.Value, out ticks))
+            {
+                ticks += epochTicks;
+                return new DateTime(ticks);
+            }
 #endif
-                DateTime result;
-                if (DateTime.TryParse(node.Value, out result))
-                {
-                    return result;
-                }
+            DateTime result;
+            if (DateTime.TryParse(this.Value, out result))
+            {
+                return result;
             }
 
             return defaultValue;
         }
 
-#endregion
+        public DateTime GetDateTime(string name, DateTime defaultValue = default(DateTime))
+        {
+            DataNode node = this.GetNode(name);
+            if (node != null)
+            {
+                return node.AsDateTime(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
     }
 }

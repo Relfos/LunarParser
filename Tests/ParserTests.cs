@@ -225,7 +225,7 @@ namespace LunarParserTests
         [Test]
         public void TestJSONReader()
         {
-            var json= "{\"message\": { \"content\": \"Hello world!\"} }";
+            var json = "{\"message\": { \"content\": \"Hello world!\"} }";
             var root = JSONReader.ReadFromString(json);
             Assert.NotNull(root);
 
@@ -275,7 +275,7 @@ namespace LunarParserTests
 
         [Test]
         public void TestJSONArray()
-        {            
+        {
             var root = JSONReader.ReadFromString("{\"message\": { \"content\": [0, 1, 2, 3]} }");
             Assert.NotNull(root);
 
@@ -291,11 +291,11 @@ namespace LunarParserTests
             var content = msg["content"];
             Assert.IsTrue(content.ChildCount == 4);
 
-            for (int i=0; i<4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 var number = content.GetNodeByIndex(i);
                 Assert.IsTrue(i.ToString().Equals(number.Value));
-            }            
+            }
         }
 
         [Test]
@@ -342,7 +342,7 @@ namespace LunarParserTests
 
             Assert.IsTrue(other.ChildCount == root.ChildCount);
 
-            for (int i=0; i<root.ChildCount; i++)
+            for (int i = 0; i < root.ChildCount; i++)
             {
                 var child = root.GetNodeByIndex(i);
                 var otherChild = other.GetNodeByIndex(i);
@@ -495,7 +495,7 @@ namespace LunarParserTests
         public void TestStructArrays()
         {
             var red = new Color(255, 0, 0, 255);
-            var green = new Color(0, 255,  0, 255);
+            var green = new Color(0, 255, 0, 255);
             var blue = new Color(0, 0, 255, 255);
             var white = new Color(255, 255, 255, 255);
             var grey = new Color(128, 128, 128, 255);
@@ -629,6 +629,113 @@ namespace LunarParserTests
             Assert.IsTrue(other == AnswerKind.No);
         }
 
-    
+        [Test]
+        public void TestAcessors()
+        {
+            var dogName = "barry";
+            var catName = "bopi";
+
+            var root = DataNode.CreateObject();
+            root.AddField("dog", dogName);
+            root.AddField("cat", catName);
+
+            string s;
+
+            s = root.GetString("dog");
+            Assert.IsTrue(s == dogName);
+
+            s = root["dog"].Value;
+            Assert.IsTrue(s == dogName);
+
+            s = root[0].Value;
+            Assert.IsTrue(s == dogName);
+
+            s = root[0].AsString();
+            Assert.IsTrue(s == dogName);
+
+            s = root.GetString("cat");
+            Assert.IsTrue(s == catName);
+
+            s = root["cat"].Value;
+            Assert.IsTrue(s == catName);
+
+            s = root[1].Value;
+            Assert.IsTrue(s == catName);
+
+            s = root[1].AsString();
+            Assert.IsTrue(s == catName);
+        }
+
+        [Test]
+        public void TestTypes()
+        {
+            var root = DataNode.CreateObject();
+            root.AddField("a", 123);
+            root.AddField("f", 123.456);
+            root.AddField("b", true);
+
+            Assert.IsTrue(root["a"].AsLong() == 123);
+            Assert.IsTrue(root.GetLong("a") == 123);
+            
+            Assert.IsTrue(root["a"].AsUInt32() == 123);
+            Assert.IsTrue(root.GetUInt32("a") == 123);
+
+            Assert.IsTrue(root["a"].AsInt32() == 123);
+            Assert.IsTrue(root.GetInt32("a") == 123);
+
+            Assert.IsTrue(root["a"].AsByte() == 123);
+            Assert.IsTrue(root.GetByte("a") == 123);
+
+            Assert.IsTrue(root["a"].AsSByte() == 123);
+            Assert.IsTrue(root.GetSByte("a") == 123);
+
+            Assert.IsTrue(root["f"].AsFloat() == 123.456f);
+            Assert.IsTrue(root.GetFloat("f") == 123.456f);
+
+            Assert.IsTrue(root["f"].AsDecimal() == 123.456m);
+            Assert.IsTrue(root.GetDecimal("f") == 123.456m);
+
+            Assert.IsTrue(root["f"].AsDouble() == 123.456);
+            Assert.IsTrue(root.GetDouble("f") == 123.456);
+
+            Assert.IsTrue(root["b"].AsBool() );
+            Assert.IsTrue(root.GetBool("b"));
+
+            Assert.IsTrue(root["f"].AsString() == "123.456");
+            Assert.IsTrue(root.GetString("f") == "123.456");
+        }
+
+        [Test]
+        public void TestDefaults()
+        {
+            var root = DataNode.CreateObject();
+            root.AddField("something", "5");
+            root.AddField("other", "1");
+            root.AddField("maybe", "yes");
+
+            string s;
+
+            s = root.GetString("maybe", "no");
+            Assert.IsTrue(s == "yes");
+
+            s = root.GetString("never", "no");
+            Assert.IsTrue(s == "no");
+
+            bool b;
+
+            b = root.GetBool("other");
+            Assert.IsTrue(b);
+
+            b = root.GetBool("missing");
+            Assert.IsFalse(b);
+
+            b = root.GetBool("missing", true);
+            Assert.IsTrue(b);
+
+            b = root.GetBool("something");
+            Assert.IsFalse(b);
+        }
+
+
     }
 }
