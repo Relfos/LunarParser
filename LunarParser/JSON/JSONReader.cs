@@ -125,6 +125,11 @@ namespace LunarParser.JSON
 
                     case State.Name:
                         {
+                            if (c == '}' && result.Kind == NodeKind.Object)
+                            {
+                                return result;
+                            }
+
                             switch (c)
                             {
                                 case '"':
