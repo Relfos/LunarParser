@@ -31,7 +31,7 @@ namespace LunarParser.JSON
         private static void ReadString(string target, string contents, ref int index)
         {
             index--;
-            for (int i=0; i<target.Length; i++)
+            for (int i = 0; i < target.Length; i++)
             {
                 if (index >= contents.Length)
                 {
@@ -39,13 +39,13 @@ namespace LunarParser.JSON
                 }
 
                 var c = contents[index];
-                
+
                 if (c != target[i])
                 {
                     throw new Exception($"JSON parsing exception, unexpected character");
                 }
 
-                index++;               
+                index++;
             }
         }
 
@@ -195,7 +195,7 @@ namespace LunarParser.JSON
                                 if (c == 'u')
                                 {
                                     var hex = "";
-                                    for (int i=0; i<4; i++)
+                                    for (int i = 0; i < 4; i++)
                                     {
                                         if (index >= contents.Length)
                                         {
@@ -203,14 +203,14 @@ namespace LunarParser.JSON
                                         }
                                         hex += contents[index]; index++;
                                     }
-                                    
+
                                     ushort unicode_val;
                                     unicode_val = ushort.Parse(hex, System.Globalization.NumberStyles.HexNumber);
 
                                     c = (char)unicode_val;
                                 }
 
-                                value_content.Append(c);                                
+                                value_content.Append(c);
                             }
                             else
                             if (c == 'n' && mode == InputMode.None)
@@ -231,7 +231,7 @@ namespace LunarParser.JSON
                             {
                                 ReadString("true", contents, ref index);
                                 result.AddField(name_content.Length == 0 ? null : name_content.ToString(), "true", NodeKind.Boolean);
-                                state = State.Next;                            
+                                state = State.Next;
                             }
                             else
                             if (c == ']' && mode == InputMode.None && result.Kind == NodeKind.Array)
@@ -239,74 +239,81 @@ namespace LunarParser.JSON
                                 return result;
                             }
                             else
-                            switch (c)
-                            {
-                                case '"':
-                                    {
-                                        if (mode == InputMode.None)
+                                switch (c)
+                                {
+                                    case '"':
                                         {
-                                            mode = InputMode.Text;
-                                            value_content.Length = 0;
-                                        }
-                                        else
-                                        {
-                                            mode = InputMode.None;
-                                            result.AddField(name_content.Length == 0 ? null: name_content.ToString(), value_content.ToString());
-                                            state = State.Next;
-                                        }
-                                        break;
-                                    }
-
-                                case '[':
-                                case '{':
-                                    {
-                                        index = rewind_index;
-                                        var node = ReadNode(contents, ref index, name_content.Length == 0 ? null: name_content.ToString());
-                                        result.AddNode(node);
-
-                                        state = State.Next;
-                                        break;
-                                    }
-
-                                default:
-                                    {
-                                        if (mode == InputMode.Text)
-                                        {
-                                            value_content.Append(c);
-                                        }
-                                        else
-                                        if (char.IsNumber(c) || (mode == InputMode.Number && c =='.'))
-                                        {
-                                            if (mode != InputMode.Number)
+                                            if (mode == InputMode.None)
                                             {
+                                                mode = InputMode.Text;
                                                 value_content.Length = 0;
-                                                mode = InputMode.Number;
-                                            }
-
-                                            value_content.Append(c);
-                                        }
-                                        else
-                                        {
-                                            if (mode == InputMode.Number)
-                                            {
-                                                mode = InputMode.None;
-                                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), value_content.ToString(), NodeKind.Numeric);
-                                                state = State.Next;
-
-                                                if (c == ',' || c == ']' || c == '}')
-                                                {
-                                                    index = rewind_index;
-                                                }
                                             }
                                             else
                                             {
-                                                throw new Exception($"JSON parsing exception at {ParserUtils.GetOffsetError(contents, index)}, unexpected character");
+                                                mode = InputMode.None;
+                                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), value_content.ToString());
+                                                state = State.Next;
                                             }
-
+                                            break;
                                         }
-                                        break;
-                                    }
-                            }
+
+                                    case '[':
+                                    case '{':
+                                        {
+                                            index = rewind_index;
+                                            var node = ReadNode(contents, ref index, name_content.Length == 0 ? null : name_content.ToString());
+                                            result.AddNode(node);
+
+                                            state = State.Next;
+                                            break;
+                                        }
+
+                                    default:
+                                        {
+                                            if (mode == InputMode.Text)
+                                            {
+                                                value_content.Append(c);
+                                            }
+                                            else
+                                            if (char.IsNumber(c) || (mode == InputMode.Number && c == '.'))
+                                            {
+                                                if (mode != InputMode.Number)
+                                                {
+                                                    value_content.Length = 0;
+                                                    mode = InputMode.Number;
+                                                }
+
+                                                value_content.Append(c);
+                                            }
+                                            else
+                                            if (c == '-' && mode == InputMode.None)
+                                            {
+                                                value_content.Length = 0;
+                                                value_content.Append(c);
+                                                mode = InputMode.Number;
+                                            }
+                                            else
+                                            {
+                                                if (mode == InputMode.Number)
+                                                {
+                                                    mode = InputMode.None;
+                                                    result.AddField(name_content.Length == 0 ? null : name_content.ToString(), value_content.ToString(), NodeKind.Numeric);
+                                                    state = State.Next;
+
+                                                    if (c == ',' || c == ']' || c == '}')
+                                                    {
+                                                        index = rewind_index;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    throw new Exception($"JSON parsing exception at {ParserUtils.GetOffsetError(contents, index)}, unexpected character");
+                                                }
+
+                                            }
+                                            break;
+                                        }
+                                }
                             break;
                         }
 
@@ -316,7 +323,7 @@ namespace LunarParser.JSON
                             {
                                 case ',':
                                     {
-                                        state = result.Kind == NodeKind.Array ? State.Value: State.Name;
+                                        state = result.Kind == NodeKind.Array ? State.Value : State.Name;
                                         break;
                                     }
 

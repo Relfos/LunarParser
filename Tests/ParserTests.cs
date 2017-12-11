@@ -247,7 +247,7 @@ namespace LunarParserTests
         [Test]
         public void TestJSONTypes()
         {
-            var root = JSONReader.ReadFromString("{\"message\": { \"number\": 3.14159, \"check\":true, \"item\": null} }");
+            var root = JSONReader.ReadFromString("{\"message\": { \"number\": 3.14159, \"negative\": -52, \"check\":true, \"item\": null} }");
             Assert.NotNull(root);
 
             var msg = root["message"];
@@ -262,6 +262,10 @@ namespace LunarParserTests
             var number = msg.GetFloat("number");
             Assert.IsTrue(Math.Abs(number - 3.14159) < 0.001f);
             Assert.IsTrue(msg.GetNode("number").Kind == NodeKind.Numeric);
+
+            var negative = msg.GetInt32("negative");
+            Assert.IsTrue(negative == -52);
+            Assert.IsTrue(msg.GetNode("negative").Kind == NodeKind.Numeric);
 
             var check = msg.GetBool("check");
             Assert.IsTrue(check);
