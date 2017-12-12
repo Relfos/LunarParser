@@ -223,6 +223,28 @@ namespace LunarParserTests
         }
 
         [Test]
+        public void TestXMLCData()
+        {
+            string test = String.Format(@"<message> <content><![CDATA[test<>me]]></content></message>");
+            var root = XMLReader.ReadFromString(test);
+            var msg = root["message"];
+            var content = msg.GetString("content");
+            Assert.IsTrue(content.Equals("test<>me"));
+
+            test = String.Format(@"<message> <content><![CDATA[test<>me]<[]]></content></message>");
+            root = XMLReader.ReadFromString(test);
+            msg = root["message"];
+            content = msg.GetString("content");
+            Assert.IsTrue(content.Equals("test<>me]<["));
+
+            test = String.Format(@"<message><content>![CDATA[testme]]</content></message>");
+            root = XMLReader.ReadFromString(test);
+            msg = root["message"];
+            content = msg.GetString("content");
+            Assert.IsTrue(content.Equals("![CDATA[testme]]"));
+        }
+
+        [Test]
         public void TestJSONReader()
         {
             var json = "{\"message\": { \"content\": \"Hello world!\"} }";

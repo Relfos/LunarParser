@@ -17,6 +17,24 @@ namespace LunarParser.XML
             AttributeValue,
             NextAttribute,
             Content,
+            CData,
+            CDataClose,
+        }
+
+        private static bool CDataAt(string contents, int index)
+        {
+            var tag = "![CDATA[";
+            for (int i=0; i<tag.Length; i++)
+            {
+                int ofs = i + index;
+                if (ofs >= contents.Length) return false;
+
+                var c = contents[ofs];
+
+                if (c != tag[i]) return false;
+            }
+
+            return true;
         }
 
         public static DataNode ReadFromString(string contents)
@@ -302,12 +320,34 @@ namespace LunarParser.XML
                             break;
                         }
 
+                    case State.CData:
+                        {
+                            if (c == ']' && contents[index-2]==c && index<contents.Length && contents[index]=='>')
+                            {
+                                state = State.Content;
+                                value_content.Length--;
+                                index++;
+                            }
+                            else
+                            {
+                                value_content.Append(c);
+                            }
+
+                            break;
+                        }
+
                     case State.Content:
                         {
                             switch (c)
                             {
                                 case '<':
                                     {
+                                        if (CDataAt(contents, index))
+                                        {
+                                            state = State.CData;
+                                            index += 8;
+                                        }
+                                        else
                                         if (index<contents.Length && contents[index] == '/')
                                         {
                                             state = State.TagClose;
