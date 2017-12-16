@@ -242,6 +242,13 @@ namespace LunarParserTests
             msg = root["message"];
             content = msg.GetString("content");
             Assert.IsTrue(content.Equals("![CDATA[testme]]"));
+
+            test = String.Format("<message><content><![CDATA[line1.test<>me\nline2.hello\nthirdline]]></content></message>");
+
+            root = XMLReader.ReadFromString(test);
+            msg = root["message"];
+            content = msg.GetString("content");
+            Assert.IsTrue(content.Equals("line1.test<>me\nline2.hello\nthirdline"));
         }
 
         [Test]

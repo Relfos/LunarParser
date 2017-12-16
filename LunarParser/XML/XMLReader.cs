@@ -64,7 +64,7 @@ namespace LunarParser.XML
                 bool isWhiteSpace;
                 bool next = false;
                 bool inside = state == State.Content || state == State.TagOpen || state == State.TagClose ||
-                              state == State.AttributeName || state == State.AttributeValue;
+                              state == State.AttributeName || state == State.AttributeValue || state == State.CData;
 
                 do
                 {
