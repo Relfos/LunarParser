@@ -61,6 +61,14 @@ namespace LunarParser
             return new DataNode(NodeKind.Array, name);
         }
 
+        public static DataNode CreateValue(object value)
+        {
+
+            NodeKind kind;
+            var val = ConvertValue(value, out kind);
+            return new DataNode(kind, null, val);
+        }
+
         public override string ToString()
         {
             if (!string.IsNullOrEmpty(Name))
@@ -72,7 +80,11 @@ namespace LunarParser
                 return Name;
             }
 
-            return this.Parent != null ? "[Node]" : "[Root]";
+            if (this.Value != null) return this.Value;
+
+            if (this.Parent != null) return "[Root]";
+
+            return "[Null]";
         }
 
         public DataNode AddNode(DataNode node)
@@ -89,21 +101,37 @@ namespace LunarParser
 
         private static readonly long epochTicks = new DateTime(1970, 1, 1).Ticks;
 
-        public DataNode AddField(string name, object value, NodeKind kind = NodeKind.String)
+        public DataNode AddValue(object value)
+        {
+            return AddField(null, value);
+        }
+
+        public DataNode AddField(string name, object value)
         {
             if (this.Kind != NodeKind.Array && this.Kind != NodeKind.Object)
             {
                 throw new Exception("The kind of this node is not 'object'!");
             }
 
-            if (value == null)
-            {
-                throw new Exception("Value for field is null!");
-            }
-
             if (value is DataNode)
             {
                 throw new Exception("Cannot add a node as a field!");
+            }
+
+            NodeKind kind;
+            string val = ConvertValue(value, out kind);
+
+            var child = new DataNode(kind, name, val);
+            this.AddNode(child);
+            return child;
+        }
+
+        private static string ConvertValue(object value, out NodeKind kind)
+        {
+            if (value == null)
+            {
+                kind = NodeKind.Null;
+                return "";                
             }
 
 #if DATETIME_AS_TIMESTAMPS
@@ -113,31 +141,37 @@ namespace LunarParser
                 value = (((DateTime)value).Ticks - epochTicks).ToString();
             }
 #endif
-
             string val;
-
             if (value is float)
             {
                 val = ((float)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
             }
             else
             if (value is double)
             {
                 val = ((double)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
             }
             else
             if (value is decimal)
             {
                 val = ((decimal)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
+            }
+            else
+            if (value is bool)
+            {
+                val = ((bool)value)?"true":"false";
+                kind = NodeKind.Boolean;
             }
             else
             {
                 val = value.ToString();
+                kind = NodeKind.String;
             }
 
-            var child = new DataNode(kind, name, val);
-            this.AddNode(child);
-            return child;
+            return val;
         }
 
         public bool HasNode(string name, int index = 0)

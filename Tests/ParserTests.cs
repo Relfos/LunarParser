@@ -11,7 +11,7 @@ namespace LunarParserTests
     [TestFixture]
     public class ParserTests
     {
-
+        #region XML
         [Test]
         public void TestXMLReader()
         {
@@ -250,7 +250,9 @@ namespace LunarParserTests
             content = msg.GetString("content");
             Assert.IsTrue(content.Equals("line1.test<>me\nline2.hello\nthirdline"));
         }
+        #endregion
 
+        #region JSON
         [Test]
         public void TestJSONReader()
         {
@@ -387,7 +389,9 @@ namespace LunarParserTests
                 Assert.IsTrue(child.Value == otherChild.Value);
             }
         }
+        #endregion
 
+        #region YAML
         [Test]
         public void TestYAMLReader()
         {
@@ -404,7 +408,9 @@ namespace LunarParserTests
 
             Assert.IsTrue("Hello world!".Equals(content));
         }
+        #endregion
 
+        #region CSV
         private struct Animal
         {
             public int id;
@@ -441,7 +447,9 @@ namespace LunarParserTests
             Assert.IsTrue(412.Equals(animal.id));
             Assert.IsTrue("Heavy Bird".Equals(animal.name));
         }
+        #endregion
 
+        #region DataNode
         [Test]
         public void TestDateTime()
         {
@@ -769,6 +777,28 @@ namespace LunarParserTests
             Assert.IsFalse(b);
         }
 
+        [Test]
+        public void TestArray()
+        {
+            var root = DataNode.CreateArray();
+            root.AddNode(DataNode.CreateValue("first"));
+            root.AddValue("second");
+            root.AddField(null, "third");
 
+            Assert.IsTrue(root.ChildCount == 3);
+
+            string s;
+
+            s = root.GetNodeByIndex(0).AsString();
+            Assert.IsTrue(s.Equals("first"));
+
+            s = root.GetNodeByIndex(1).AsString();
+            Assert.IsTrue(s.Equals("second"));
+
+            s = root.GetNodeByIndex(2).AsString();
+            Assert.IsTrue(s.Equals("third"));
+        }
+
+        #endregion
     }
 }
