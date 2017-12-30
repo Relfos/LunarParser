@@ -260,11 +260,19 @@ namespace LunarParser.JSON
                                     case '[':
                                     case '{':
                                         {
-                                            index = rewind_index;
-                                            var node = ReadNode(contents, ref index, name_content.Length == 0 ? null : name_content.ToString());
-                                            result.AddNode(node);
+                                            if (mode == InputMode.Text)
+                                            {
+                                                value_content.Append(c);
+                                            }
+                                            else
+                                            {
+                                                index = rewind_index;
+                                                var node = ReadNode(contents, ref index, name_content.Length == 0 ? null : name_content.ToString());
+                                                result.AddNode(node);
 
-                                            state = State.Next;
+                                                state = State.Next;
+                                            }
+
                                             break;
                                         }
 
