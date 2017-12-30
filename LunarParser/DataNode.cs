@@ -126,6 +126,23 @@ namespace LunarParser
             return child;
         }
 
+#if DATETIME_AS_TIMESTAMPS
+        internal static DateTime FromTimestamp(long unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
+
+        internal static long ToTimestamp(DateTime value)
+        {
+            long epoch = (value.Ticks - 621355968000000000) / 10000000;
+            return epoch;
+        }
+
+#endif
+
         private static string ConvertValue(object value, out NodeKind kind)
         {
             if (value == null)
@@ -134,14 +151,17 @@ namespace LunarParser
                 return "";                
             }
 
+            string val;
+
 #if DATETIME_AS_TIMESTAMPS
             // convert dates to unix timestamps
             if (value.GetType() == typeof(DateTime))
             {
-                value = (((DateTime)value).Ticks - epochTicks).ToString();
+                val = ToTimestamp(((DateTime)value)).ToString();
+                kind = NodeKind.Numeric;
             }
+            else
 #endif
-            string val;
             if (value is float)
             {
                 val = ((float)value).ToString(CultureInfo.InvariantCulture);
@@ -622,8 +642,7 @@ namespace LunarParser
             long ticks;
             if (long.TryParse(this.Value, out ticks))
             {
-                ticks += epochTicks;
-                return new DateTime(ticks);
+                return FromTimestamp(ticks);
             }
 #endif
             DateTime result;

@@ -256,7 +256,8 @@ namespace LunarParserTests
         [Test]
         public void TestJSONReader()
         {
-            var json = "{\"message\": { \"content\": \"Hello world!\"} }";
+            var hello = "Hello [world]!";
+            var json = "{\"message\": { \"content\": \""+hello+"\"} }";
             var root = JSONReader.ReadFromString(json);
             Assert.NotNull(root);
 
@@ -272,7 +273,7 @@ namespace LunarParserTests
             var content = msg.GetString("content");
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue("Hello world!".Equals(content));
+            Assert.IsTrue(hello.Equals(content));
         }
 
         [Test]
