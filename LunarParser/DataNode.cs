@@ -82,7 +82,7 @@ namespace LunarParser
 
             if (this.Value != null) return this.Value;
 
-            if (this.Parent != null) return "[Root]";
+            if (this.Parent == null) return "[Root]";
 
             return "[Null]";
         }
