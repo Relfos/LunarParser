@@ -283,7 +283,7 @@ namespace LunarParser.JSON
                                                 value_content.Append(c);
                                             }
                                             else
-                                            if (char.IsNumber(c) || (mode == InputMode.Number && c == '.'))
+                                            if (char.IsNumber(c) || (c == '.' || c == 'e' || c == '-'))
                                             {
                                                 if (mode != InputMode.Number)
                                                 {
@@ -294,20 +294,22 @@ namespace LunarParser.JSON
                                                 value_content.Append(c);
                                             }
                                             else
-                                            if (c == '-' && mode == InputMode.None)
-                                            {
-                                                value_content.Length = 0;
-                                                value_content.Append(c);
-                                                mode = InputMode.Number;
-                                            }
-                                            else
                                             {
                                                 if (mode == InputMode.Number)
                                                 {
                                                     mode = InputMode.None;
 
-                                                    var num = decimal.Parse(value_content.ToString());
-                                                    result.AddField(name_content.Length == 0 ? null : name_content.ToString(), num);
+                                                    var numStr = value_content.ToString();
+                                                    if (numStr.Contains("e"))
+                                                    {
+                                                        var num = double.Parse(numStr);
+                                                        result.AddField(name_content.Length == 0 ? null : name_content.ToString(), num);
+                                                    }
+                                                    else
+                                                    {
+                                                        var num = decimal.Parse(numStr);
+                                                        result.AddField(name_content.Length == 0 ? null : name_content.ToString(), num);
+                                                    }
                                                     state = State.Next;
 
                                                     if (c == ',' || c == ']' || c == '}')
