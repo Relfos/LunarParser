@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace LunarParser.JSON
@@ -283,13 +284,15 @@ namespace LunarParser.JSON
                                                 value_content.Append(c);
                                             }
                                             else
-                                            if (char.IsNumber(c) || (c == '.' || c == 'e' || c == '-'))
+                                            if (char.IsNumber(c) || (c == '.' || c == 'e'|| c == 'E' || c == '-'))
                                             {
                                                 if (mode != InputMode.Number)
                                                 {
                                                     value_content.Length = 0;
                                                     mode = InputMode.Number;
                                                 }
+
+                                                if (c == 'E') c = 'e';
 
                                                 value_content.Append(c);
                                             }
@@ -302,12 +305,12 @@ namespace LunarParser.JSON
                                                     var numStr = value_content.ToString();
                                                     if (numStr.Contains("e"))
                                                     {
-                                                        var num = double.Parse(numStr);
+                                                        var num = double.Parse(numStr, NumberStyles.Any, CultureInfo.InvariantCulture);
                                                         result.AddField(name_content.Length == 0 ? null : name_content.ToString(), num);
                                                     }
                                                     else
                                                     {
-                                                        var num = decimal.Parse(numStr);
+                                                        var num = decimal.Parse(numStr, NumberStyles.Any, CultureInfo.InvariantCulture);
                                                         result.AddField(name_content.Length == 0 ? null : name_content.ToString(), num);
                                                     }
                                                     state = State.Next;
