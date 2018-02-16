@@ -48,13 +48,13 @@ namespace LunarParser
             return result;
         }
 
-        public static DataNode ToDataSource<T>(this IEnumerable<T> obj, string name)
+        public static DataNode ToDataNode<T>(this IEnumerable<T> obj, string name)
         {
             var result = DataNode.CreateArray(name);
 
             foreach (var item in obj)
             {
-                var node = item.ToDataSource();
+                var node = item.ToDataNode();
                 result.AddNode(node);
             }
 
@@ -108,7 +108,7 @@ namespace LunarParser
         /// <summary>
         /// Converts an object to a DataSource
         /// </summary>
-        public static DataNode ToDataSource(this object obj, string name = null)
+        public static DataNode ToDataNode(this object obj, string name = null)
         {
             if (obj == null)
             {
@@ -130,21 +130,23 @@ namespace LunarParser
             foreach (var field in fields)
             {
                 var val = field.GetValue(obj);
+
+                var fieldName = field.Name.ToLower();
+                var typeInfo = field.FieldType.GetTypeInfo();
+
+                if (field.FieldType.IsPrimitive() || typeInfo.IsEnum)
+                {
+                    result.AddField(fieldName, val);
+                }
+                else
                 if (val != null)
                 {
-                    var fieldName = field.Name.ToLower();
-                    var typeInfo = field.FieldType.GetTypeInfo();
-
-                    if (field.FieldType.IsPrimitive() || typeInfo.IsEnum)
-                    {
-                        result.AddField(fieldName, val);
-                    }
-                    else
-                    {
-                        var node = val.ToDataSource(fieldName);
-                        result.AddNode(node);
-                    }
-                    
+                    var node = val.ToDataNode(fieldName);
+                    result.AddNode(node);
+                }               
+                else
+                {
+                    result.AddField(fieldName, null);
                 }
             }
 

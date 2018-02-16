@@ -372,7 +372,7 @@ namespace LunarParserTests
         {
             var color = new Color(200, 100, 220, 128);
             var root = DataNode.CreateObject(null);
-            root.AddNode(color.ToDataSource());
+            root.AddNode(color.ToDataNode());
 
             var json = JSONWriter.WriteToString(root);
             Assert.NotNull(json);
@@ -512,7 +512,7 @@ namespace LunarParserTests
             var root = DataNode.CreateObject("test");
             Assert.NotNull(root);
 
-            var obj = color.ToDataSource();
+            var obj = color.ToDataNode();
             Assert.IsTrue(obj.ChildCount == 4);
 
             root.AddNode(obj);
@@ -550,7 +550,7 @@ namespace LunarParserTests
             Assert.NotNull(root);
 
             var colors = new Color[] { red, green, blue, white, grey };
-            var temp = colors.ToDataSource("colors");
+            var temp = colors.ToDataNode("colors");
             Assert.NotNull(temp);
             Assert.IsTrue(temp.ChildCount == 5);
 
@@ -594,7 +594,7 @@ namespace LunarParserTests
             var root = DataNode.CreateObject("test");
             Assert.NotNull(root);
 
-            var obj = cgroup.ToDataSource();
+            var obj = cgroup.ToDataNode();
             Assert.IsTrue(obj.ChildCount == 2);
 
             root.AddNode(obj);
