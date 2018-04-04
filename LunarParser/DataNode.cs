@@ -1,6 +1,7 @@
 //#define DATETIME_AS_TIMESTAMPS
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -17,7 +18,7 @@ namespace LunarParser
         Null
     }
 
-    public class DataNode
+    public class DataNode: IEnumerable<DataNode>
     {
         protected List<DataNode> _children = new List<DataNode>();
         public IEnumerable<DataNode> Children { get { return _children; } }
@@ -28,7 +29,7 @@ namespace LunarParser
 
         public bool HasChildren { get { return _children.Count > 0; } }
 
-        public string Name { get; private set; }
+        public string Name { get; set; }
         public string Value { get; set; }
         public NodeKind Kind { get; private set; }
 
@@ -39,6 +40,16 @@ namespace LunarParser
             this.Parent = null;
             this.Name = name;
             this.Value = value;
+        }
+
+        public IEnumerator<DataNode> GetEnumerator()
+        {
+            return _children.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _children.GetEnumerator();
         }
 
         public DataNode this[string name]

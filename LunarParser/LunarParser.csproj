@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net45;net461;net471</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Sergio Flores</Authors>
     <Company>Lunar Labs</Company>
@@ -10,10 +10,10 @@
 Create data nodes manually and serialize it back to those formats.</Description>
     <PackageProjectUrl>https://github.com/relfos/lunar_parser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/relfos/lunar_parser</RepositoryUrl>
-    <Version>1.0.29</Version>
-    <AssemblyVersion>1.0.30.0</AssemblyVersion>
+    <Version>1.0.32</Version>
+    <AssemblyVersion>1.0.32.0</AssemblyVersion>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <FileVersion>1.0.30.0</FileVersion>
+    <FileVersion>1.0.32.0</FileVersion>
     <PackageTags>xml yaml json parser csv</PackageTags>
   </PropertyGroup>
 

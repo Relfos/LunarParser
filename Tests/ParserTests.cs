@@ -256,7 +256,7 @@ namespace LunarParserTests
         [Test]
         public void TestJSONReader()
         {
-            var hello = "Hello [world]!";
+            var hello = "The {{Strange}} [[Message]]!";
             var json = "{\"message\": { \"content\": \""+hello+"\"} }";
             var root = JSONReader.ReadFromString(json);
             Assert.NotNull(root);
