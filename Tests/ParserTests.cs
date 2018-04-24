@@ -258,6 +258,7 @@ namespace LunarParserTests
         {
             var hello = "The {{Strange}} [[Message]]!";
             var json = "{\"message\": { \"content\": \""+hello+"\"} }";
+
             var root = JSONReader.ReadFromString(json);
             Assert.NotNull(root);
 
@@ -279,7 +280,7 @@ namespace LunarParserTests
         [Test]
         public void TestJSONTypes()
         {
-            var root = JSONReader.ReadFromString("{\"message\": { \"number\": 3.14159, \"negative\": -52, \"check\":true, \"item\": null, \"science\":-1.0e-5} }");
+            var root = JSONReader.ReadFromString("{\"message\": { \"number\": 3.14159, \"negative\": -52, \"check\":true, \"item\": null, \"science\":-1.0e-5, \"science_alt\":-2.0e+5} }");
             Assert.NotNull(root);
 
             var msg = root["message"];
