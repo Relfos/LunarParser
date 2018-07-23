@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LunarParser.CSV
+namespace LunarLabs.Parser.CSV
 {
     public class CSVReader
     {

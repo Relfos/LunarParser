@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LunarParser.CSV
+namespace LunarLabs.Parser.CSV
 {
     public class CSVWriter
     {

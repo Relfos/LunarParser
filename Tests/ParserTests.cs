@@ -1,8 +1,8 @@
-﻿using LunarParser;
-using LunarParser.CSV;
-using LunarParser.JSON;
-using LunarParser.XML;
-using LunarParser.YAML;
+﻿using LunarLabs.Parser;
+using LunarLabs.Parser.CSV;
+using LunarLabs.Parser.JSON;
+using LunarLabs.Parser.XML;
+using LunarLabs.Parser.YAML;
 using NUnit.Framework;
 using System;
 

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace LunarParser.YAML
+namespace LunarLabs.Parser.YAML
 {
 
     public class YAMLWriter

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Globalization;
 using System.Collections;
 
-namespace LunarParser
+namespace LunarLabs.Parser
 {
     public static class DataNodeExtensions
     {

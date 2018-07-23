@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace LunarParser.JSON
+namespace LunarLabs.Parser.JSON
 {
     public class JSONReader
     {

@@ -1,13 +1,13 @@
 ﻿using System.IO;
 
-using LunarParser.XML;
-using LunarParser.JSON;
-using LunarParser.YAML;
-using LunarParser.Binary;
-using LunarParser.CSV;
+using LunarLabs.Parser.XML;
+using LunarLabs.Parser.JSON;
+using LunarLabs.Parser.YAML;
+using LunarLabs.Parser.Binary;
+using LunarLabs.Parser.CSV;
 using System;
 
-namespace LunarParser
+namespace LunarLabs.Parser
 {
     public enum DataFormat
     {

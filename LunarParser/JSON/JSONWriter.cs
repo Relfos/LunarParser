@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LunarParser.JSON
+namespace LunarLabs.Parser.JSON
 {
     public static class JSONWriter
     {

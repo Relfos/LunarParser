@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace LunarParser.XML
+namespace LunarLabs.Parser.XML
 {
     public class XMLReader
     {

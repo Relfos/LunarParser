@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace LunarParser.XML
+namespace LunarLabs.Parser.XML
 {
 
     public class XMLWriter
