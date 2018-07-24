@@ -18,9 +18,7 @@ namespace LunarLabs.Parser.JSON
             if (node.Value != null)
             {
                 var val = node.Value;
-                var isNumeric = val.IsNumeric();
-
-                bool shouldEscape = !isNumeric;
+                bool shouldEscape = (node.Kind == NodeKind.String);
 
                 if (shouldEscape)
                 {

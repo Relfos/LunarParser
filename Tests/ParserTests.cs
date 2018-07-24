@@ -395,6 +395,25 @@ namespace LunarParserTests
                 Assert.IsTrue(child.Value == otherChild.Value);
             }
         }
+
+        [Test]
+        public void TestJSONTyping()
+        {
+            var root = DataNode.CreateObject(null);
+            var val = "0000";
+            root.AddField("msg", val);
+
+            var json = JSONWriter.WriteToString(root);
+            Assert.NotNull(json);
+
+            var other = JSONReader.ReadFromString(json);
+            Assert.NotNull(other);
+
+            Assert.IsTrue(other.ChildCount == root.ChildCount);
+
+            var otherVal = other.GetString("msg");
+            Assert.IsTrue(otherVal.Equals(val));
+        }
         #endregion
 
         #region YAML
