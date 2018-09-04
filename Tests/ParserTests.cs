@@ -735,10 +735,16 @@ namespace LunarParserTests
         [Test]
         public void TestTypes()
         {
-            var root = DataNode.CreateObject();
-            root.AddField("a", 123);
-            root.AddField("f", 123.456);
-            root.AddField("b", true);
+            var temp = DataNode.CreateObject("root");
+            temp.AddField("a", 123);
+            temp.AddField("f", 123.456);
+            temp.AddField("d", "7.65e-6");
+            temp.AddField("b", true);
+
+            var json = JSONWriter.WriteToString(temp);
+            var root = JSONReader.ReadFromString(json);
+            root = root["root"];
+            Assert.IsNotNull(root);
 
             Assert.IsTrue(root["a"].AsLong() == 123);
             Assert.IsTrue(root.GetLong("a") == 123);
@@ -758,8 +764,8 @@ namespace LunarParserTests
             Assert.IsTrue(root["f"].AsFloat() == 123.456f);
             Assert.IsTrue(root.GetFloat("f") == 123.456f);
 
-            Assert.IsTrue(root["f"].AsDecimal() == 123.456m);
-            Assert.IsTrue(root.GetDecimal("f") == 123.456m);
+            Assert.IsTrue(root["d"].AsDecimal() == 0.00000765m);
+            Assert.IsTrue(root.GetDecimal("d") == 0.00000765m);
 
             Assert.IsTrue(root["f"].AsDouble() == 123.456);
             Assert.IsTrue(root.GetDouble("f") == 123.456);

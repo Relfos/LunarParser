@@ -619,7 +619,7 @@ namespace LunarLabs.Parser
         public Decimal AsDecimal(decimal defaultValue = 0)
         {
             decimal result = defaultValue;
-            if (decimal.TryParse(this.Value, NumberStyles.Number, CultureInfo.InvariantCulture.NumberFormat, out result))
+            if (decimal.TryParse(this.Value, NumberStyles.Number | NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat, out result))
             {
                 return result;
             }
