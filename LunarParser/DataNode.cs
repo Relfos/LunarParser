@@ -173,6 +173,42 @@ namespace LunarLabs.Parser
             }
             else
 #endif
+            if (value is int)
+            {
+                val = ((int)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
+            }
+            else
+            if (value is uint)
+            {
+                val = ((uint)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
+            }
+            else
+            if (value is byte)
+            {
+                val = ((byte)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
+            }
+            else
+            if (value is sbyte)
+            {
+                val = ((sbyte)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
+            }
+            else
+            if (value is short)
+            {
+                val = ((short)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
+            }
+            else
+            if (value is ushort)
+            {
+                val = ((ushort)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
+            }
+            else
             if (value is float)
             {
                 val = ((float)value).ToString(CultureInfo.InvariantCulture);
