@@ -251,8 +251,25 @@ namespace LunarLabs.Parser.JSON
                                             }
                                             else
                                             {
+                                                object value;
+
+                                                var str = value_content.ToString();
+
+                                                if (mode == InputMode.Number)
+                                                {
+                                                    if (str.Contains("e"))
+                                                    {
+                                                        // TODO
+                                                    }
+                                                    value = str;
+                                                }
+                                                else
+                                                {
+                                                    value = str;
+                                                }
                                                 mode = InputMode.None;
-                                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), value_content.ToString());
+
+                                                result.AddField(name_content.Length == 0 ? null : name_content.ToString(), value);
                                                 state = State.Next;
                                             }
                                             break;
