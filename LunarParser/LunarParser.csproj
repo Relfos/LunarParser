@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Sergio Flores</Authors>
     <Company>Lunar Labs</Company>
-    <Product>Lunar Parser</Product>
+    <Product>LunarLabs.Parser</Product>
     <Description>Read data from strings in XML/JSON/YAML/CSV formats into a tree structure. 
 Create data nodes manually and serialize it back to those formats.</Description>
     <PackageProjectUrl>https://github.com/relfos/lunar_parser</PackageProjectUrl>
