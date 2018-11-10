@@ -10,8 +10,7 @@ namespace LunarLabs.Parser.YAML
         public static string WriteToString(DataNode node)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("--- #");
-
+            
             WriteNode(builder, node, 0);
 
             return builder.ToString();
@@ -23,13 +22,16 @@ namespace LunarLabs.Parser.YAML
             {
                 buffer.Append(' ');
             }
-            buffer.Append(node.Name);
-            buffer.Append(':');
-            if (node.Value != null)
-            {
-                buffer.Append(node.Value);
+
+            if(node.Name != null && node.Name != ""){
+                buffer.Append(node.Name);
+                buffer.Append(': ');
+                if (node.Value != null)
+                {
+                    buffer.Append(node.Value);
+                }
+                buffer.AppendLine();
             }
-            buffer.AppendLine();
 
             foreach (var child in node.Children)
             {
