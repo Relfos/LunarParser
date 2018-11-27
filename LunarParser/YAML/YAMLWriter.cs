@@ -25,7 +25,8 @@ namespace LunarLabs.Parser.YAML
 
             if(node.Name != null && node.Name != ""){
                 buffer.Append(node.Name);
-                buffer.Append(': ');
+                buffer.Append(':');
+                buffer.Append(' ');
                 if (node.Value != null)
                 {
                     buffer.Append(node.Value);
