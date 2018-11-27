@@ -82,18 +82,20 @@ namespace LunarLabs.Parser
 
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(Name))
+            if (this.ChildCount == 0 && !string.IsNullOrEmpty(this.Value))
             {
-                if (ChildCount == 0)
-                {
-                    return Name + " = " + Value;
-                }
-                return Name;
+                return this.Value;
             }
 
-            if (this.Value != null) return this.Value;
+            if (!string.IsNullOrEmpty(Name))
+            {
+                return $"[{Name}]";
+            }
 
-            if (this.Parent == null) return "[Root]";
+            if (this.Parent == null)
+            {
+                return "[Root]";
+            }
 
             return "[Null]";
         }
