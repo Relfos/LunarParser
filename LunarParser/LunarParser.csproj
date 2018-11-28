@@ -15,6 +15,7 @@ Create data nodes manually and serialize it back to those formats.</Description>
     <PackageReleaseNotes></PackageReleaseNotes>
     <FileVersion>1.2.5.0</FileVersion>
     <PackageTags>xml yaml json parser csv</PackageTags>
+    <PackageId>LunarLabs.Parser</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
