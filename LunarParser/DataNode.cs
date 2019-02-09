@@ -89,7 +89,7 @@ namespace LunarLabs.Parser
 
             if (!string.IsNullOrEmpty(Name))
             {
-                return $"[{Name}]";
+                return $"{Name}";
             }
 
             if (this.Parent == null)
