@@ -433,6 +433,13 @@ namespace LunarParserTests
 
             Assert.IsTrue("Hello world!".Equals(content));
         }
+
+        [Test]
+        public void TestYAMLIdentationBlock()
+        {
+            var root = YAMLReader.ReadFromString("layout: list\r\ntitle: iDEX Activities\r\nslug: activities\r\ndescription: >\r\n  This page is for blogging activities of iDEX.");
+            Assert.NotNull(root);
+        }
         #endregion
 
         #region CSV

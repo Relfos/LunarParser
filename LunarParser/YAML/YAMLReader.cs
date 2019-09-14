@@ -22,12 +22,7 @@ namespace LunarLabs.Parser.YAML
         {
             var lines = contents.Split('\n');
            
-            if (!lines[0].StartsWith("---"))
-            {
-                throw new Exception($"YAML parsing exception, expected valid header");
-            }
-
-            int index = 1;
+            int index = 0;
             var root = DataNode.CreateArray(null);
             ReadNodes(lines, ref index, 0, root);
 
@@ -48,7 +43,13 @@ namespace LunarLabs.Parser.YAML
                 }
 
                 int identCount = 0;
-                var content = lines[index];
+                var content = lines[index].TrimEnd();
+
+                if (content.StartsWith("---"))
+                {
+                    index++;
+                    continue;
+                }
 
                 for (int i=0; i<content.Length; i++)
                 {
@@ -98,6 +99,30 @@ namespace LunarLabs.Parser.YAML
                     val = null;
                 }
 
+                if (val == ">" || val == "|")
+                {
+                    bool preserveLineBreaks = val == "|";
+
+                    var sb = new StringBuilder();
+                    while (index<lines.Length)
+                    {
+                        var line = lines[index].TrimStart();
+                        if (line.Contains(":"))
+                        {
+                            break;
+                        }
+
+                        sb.Append(line);
+                        if (preserveLineBreaks)
+                        {
+                            sb.Append('\n');
+                        }
+                        index++;
+                    }
+                    sb.Append('\n'); // TODO is adding this at the end necessary?
+                    val = sb.ToString();
+                }
+                
                 if (!string.IsNullOrEmpty(val))
                 {
                     parent.AddField(name, val);
