@@ -7,16 +7,16 @@ namespace LunarLabs.Parser.XML
 
     public class XMLWriter
     {
-        public static string WriteToString(DataNode node)
+        public static string WriteToString(DataNode node, bool expand = false)
         {
             StringBuilder builder = new StringBuilder();
 
-            WriteNode(builder, node, 0);
+            WriteNode(builder, node, 0, expand);
 
             return builder.ToString();
         }
 
-        private static void WriteNode(StringBuilder buffer, DataNode node, int tabs)
+        private static void WriteNode(StringBuilder buffer, DataNode node, int tabs, bool expand)
         {
             for (int i = 0; i < tabs; i++)
             {
@@ -27,9 +27,10 @@ namespace LunarLabs.Parser.XML
 
             int cc = 0;
             int cs = 0;
+
             foreach (DataNode child in node.Children)
             {
-                if (child.Children.Any())
+                if (expand || child.Children.Any())
                 {
                     cc++;
                     continue;
@@ -50,33 +51,47 @@ namespace LunarLabs.Parser.XML
                 buffer.Append(' ');
             }
 
-            if (cc == 0)
+            var finished = cc == 0 && (!expand || node.Value == null);
+
+            if (finished)
             {
                 buffer.Append('/');
             }
             buffer.Append('>');
-            buffer.AppendLine();
 
-            if (cc == 0)
+            if (finished)
             {
+                if (!expand)
+                {
+                    buffer.AppendLine();
+                }
                 return;
             }
 
-            foreach (DataNode child in node.Children)
+            if (cc == 0 && expand && node.Value != null)
             {
-                if (!child.Children.Any())
+                buffer.Append(node.Value);
+            }
+            else
+            {
+                buffer.AppendLine();
+
+                foreach (DataNode child in node.Children)
                 {
-                    continue;
+                    if (!expand && !child.Children.Any())
+                    {
+                        continue;
+                    }
+
+                    WriteNode(buffer, child, tabs + 1, expand);
                 }
 
-                WriteNode(buffer, child, tabs + 1);
+                for (int i = 0; i < tabs; i++)
+                {
+                    buffer.Append('\t');
+                }
             }
 
-
-            for (int i = 0; i < tabs; i++)
-            {
-                buffer.Append('\t');
-            }
 
             buffer.Append('<');
             buffer.Append('/');

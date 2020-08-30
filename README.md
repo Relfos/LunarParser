@@ -143,6 +143,12 @@ This works by inspecting public fields with reflection. Properties are currently
 
 However note that those methods are still experimental, and currently they won't supported nested objects, but will work fine with simple structs / classes.
 
+## XML format
+
+When saving in XML format, by default XMLWriter will save any node that contains zero childs as an attribute instead of full XML node.
+If this is not desirable, pass true as argument to the expand paramater of XMLWriter.WriteToString
+
+
 ## CSV format
 
 The CSV format can not handle nested nodes. This is a limitation of the format itself, so be careful if converting from other formats to CSV.

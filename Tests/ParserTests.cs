@@ -5,6 +5,7 @@ using LunarLabs.Parser.XML;
 using LunarLabs.Parser.YAML;
 using NUnit.Framework;
 using System;
+using System.IO;
 
 namespace LunarParserTests
 {
@@ -29,6 +30,27 @@ namespace LunarParserTests
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
             Assert.IsTrue("Hello world!".Equals(content));
+        }
+
+        [Test]
+        public void TestXMLWriter()
+        {
+            var root = DataNode.CreateObject("data");
+            Assert.NotNull(root);
+
+            var temp = DataNode.CreateObject("entry");
+            temp.AddField("name", "xx");
+            root.AddNode(temp);
+
+            var xml = XMLWriter.WriteToString(root);
+            var expected = "<data>\n\t<entry name=\"xx\" />\n</data>\n";
+            expected = expected.Replace("\n", Environment.NewLine);
+            Assert.IsTrue(xml == expected);
+
+            xml = XMLWriter.WriteToString(root, true);
+            expected = "<data>\n\t<entry>\n\t\t<name>xx</name>\n\t</entry>\n</data>\n";
+            expected = expected.Replace("\n", Environment.NewLine);
+            Assert.IsTrue(xml == expected);
         }
 
         [Test]

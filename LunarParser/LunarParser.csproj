@@ -10,10 +10,10 @@
 Create data nodes manually and serialize it back to those formats.</Description>
     <PackageProjectUrl>https://github.com/relfos/lunar_parser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/relfos/lunar_parser</RepositoryUrl>
-    <Version>1.2.7</Version>
-    <AssemblyVersion>1.2.7.0</AssemblyVersion>
+    <Version>1.2.8</Version>
+    <AssemblyVersion>1.2.8.0</AssemblyVersion>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <FileVersion>1.2.7.0</FileVersion>
+    <FileVersion>1.2.8.0</FileVersion>
     <PackageTags>xml yaml json parser csv</PackageTags>
     <PackageId>LunarLabs.Parser</PackageId>
   </PropertyGroup>
@@ -21,5 +21,9 @@ Create data nodes manually and serialize it back to those formats.</Description>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;NETSTANDARD1_4;DATETIME_AS_TIMESTAMPS</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+  </ItemGroup>
 
 </Project>
