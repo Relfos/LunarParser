@@ -108,7 +108,7 @@ namespace LunarLabs.Parser
         /// <summary>
         /// Converts an object to a DataSource
         /// </summary>
-        public static DataNode ToDataNode(this object obj, string name = null)
+        public static DataNode ToDataNode(this object obj, string name = null, bool isArrayElement = false)
         {
             if (obj == null)
             {
@@ -120,7 +120,7 @@ namespace LunarLabs.Parser
             var info = type.GetTypeInfo();
             var fields = info.DeclaredFields.Where(f => f.IsPublic);
 
-            if (name == null)
+            if (name == null && !isArrayElement)
             {
                 name = type.Name.ToLower();
             }
@@ -137,6 +137,26 @@ namespace LunarLabs.Parser
                 if (field.FieldType.IsPrimitive() || typeInfo.IsEnum)
                 {
                     result.AddField(fieldName, val);
+                }
+                else
+                if (typeInfo.IsArray)
+                {
+                    var arrayNode = DataNode.CreateArray(fieldName);
+
+                    var array = (Array)val;
+                    if (array != null && array.Length > 0)
+                    {
+                        var elementType = type.GetElementType();
+                        for (int i = 0; i < array.Length; i++)
+                        {
+                            var item = array.GetValue(i);
+
+                            var itemNode = item.ToDataNode(null, true);
+                            arrayNode.AddNode(itemNode);
+                        }
+                    }
+
+                    result.AddNode(arrayNode);
                 }
                 else
                 if (val != null)
