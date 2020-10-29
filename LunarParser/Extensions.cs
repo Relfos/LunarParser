@@ -105,6 +105,36 @@ namespace LunarLabs.Parser
                 || type == typeof(string) || type == typeof(DateTime);
         }
 
+        private static DataNode FromArray(object obj, string arrayName = null)
+        {
+            var result = DataNode.CreateArray(arrayName);
+
+            var array = (Array)obj;
+            var type = array.GetType();
+
+            if (array != null && array.Length > 0)
+            {
+                var itemType = type.GetElementType();
+
+                for (int i = 0; i < array.Length; i++)
+                {
+                    var item = array.GetValue(i);
+
+                    if (itemType.IsPrimitive())
+                    {
+                        result.AddValue(item);
+                    }
+                    else
+                    {
+                        var itemNode = item.ToDataNode(null, true);
+                        result.AddNode(itemNode);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Converts an object to a DataSource
         /// </summary>
@@ -117,14 +147,47 @@ namespace LunarLabs.Parser
 
             Type type = obj.GetType();
 
-            var info = type.GetTypeInfo();
-            var fields = info.DeclaredFields.Where(f => f.IsPublic);
+            if (type.IsArray)
+            {
+                return FromArray(obj);
+            }
+            else
+            if (IsPrimitive(type))
+            {
+                throw new Exception("Can't convert primitive type to DataNode");
+            }
+
+            TypeInfo info = null;
+            var fields = Enumerable.Empty<FieldInfo>();
+
+            Type currentClass = type;
+            do
+            {
+                var currentInfo = currentClass.GetTypeInfo();
+                if (currentClass == type)
+                {
+                    info = currentInfo;
+                }
+
+                var temp = currentInfo.DeclaredFields.Where(f => f.IsPublic);
+
+                var fieldArray = temp.ToArray();
+
+                fields = temp.Concat(fields);
+
+                currentClass = currentInfo.BaseType;
+                if (currentClass == typeof(object))
+                {
+                    break;
+                }
+            } while (true);
+            
 
             if (name == null && !isArrayElement)
             {
                 name = type.Name.ToLower();
             }
-            
+
             var result = DataNode.CreateObject(name);
 
             foreach (var field in fields)
@@ -132,30 +195,16 @@ namespace LunarLabs.Parser
                 var val = field.GetValue(obj);
 
                 var fieldName = field.Name.ToLower();
-                var typeInfo = field.FieldType.GetTypeInfo();
+                var fieldTypeInfo = field.FieldType.GetTypeInfo();
 
-                if (field.FieldType.IsPrimitive() || typeInfo.IsEnum)
+                if (field.FieldType.IsPrimitive() || fieldTypeInfo.IsEnum)
                 {
                     result.AddField(fieldName, val);
                 }
                 else
-                if (typeInfo.IsArray)
+                if (fieldTypeInfo.IsArray)
                 {
-                    var arrayNode = DataNode.CreateArray(fieldName);
-
-                    var array = (Array)val;
-                    if (array != null && array.Length > 0)
-                    {
-                        var elementType = type.GetElementType();
-                        for (int i = 0; i < array.Length; i++)
-                        {
-                            var item = array.GetValue(i);
-
-                            var itemNode = item.ToDataNode(null, true);
-                            arrayNode.AddNode(itemNode);
-                        }
-                    }
-
+                    var arrayNode = FromArray(val, fieldName);
                     result.AddNode(arrayNode);
                 }
                 else
