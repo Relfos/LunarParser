@@ -187,6 +187,18 @@ namespace LunarLabs.Parser
                 kind = NodeKind.Numeric;
             }
             else
+            if (value is long)
+            {
+                val = ((long)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
+            }
+            else
+            if (value is ulong)
+            {
+                val = ((ulong)value).ToString(CultureInfo.InvariantCulture);
+                kind = NodeKind.Numeric;
+            }
+            else
             if (value is byte)
             {
                 val = ((byte)value).ToString(CultureInfo.InvariantCulture);
