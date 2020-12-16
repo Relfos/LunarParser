@@ -6,6 +6,7 @@ namespace LunarLabs.Parser.XML
 {
 
     public class XMLWriter
+
     {
         public static string WriteToString(DataNode node, bool expand = false)
         {
@@ -25,14 +26,14 @@ namespace LunarLabs.Parser.XML
             buffer.Append('<');
             buffer.Append(node.Name);
 
-            int cc = 0;
-            int cs = 0;
+            int skippedChildren = 0;
+            int processedChildren = 0;
 
             foreach (DataNode child in node.Children)
             {
                 if (expand || child.Children.Any())
                 {
-                    cc++;
+                    skippedChildren++;
                     continue;
                 }
 
@@ -43,15 +44,15 @@ namespace LunarLabs.Parser.XML
                 buffer.Append(child.Value);
                 buffer.Append('"');
 
-                cs++;
+                processedChildren++;
             }
 
-            if (cs > 0)
+            if (processedChildren > 0)
             {
                 buffer.Append(' ');
             }
 
-            var finished = cc == 0 && (!expand || node.Value == null);
+            var finished = processedChildren == node.ChildCount && node.Value == null;
 
             if (finished)
             {
@@ -67,12 +68,8 @@ namespace LunarLabs.Parser.XML
                 }
                 return;
             }
-
-            if (cc == 0 && expand && node.Value != null)
-            {
-                buffer.Append(node.Value);
-            }
-            else
+            
+            if (processedChildren < node.ChildCount)
             {
                 buffer.AppendLine();
 
@@ -92,6 +89,10 @@ namespace LunarLabs.Parser.XML
                 }
             }
 
+            if (node.Value != null)
+            {
+                buffer.Append(node.Value);
+            }
 
             buffer.Append('<');
             buffer.Append('/');
