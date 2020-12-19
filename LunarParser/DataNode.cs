@@ -357,6 +357,39 @@ namespace LunarLabs.Parser
         }
         #endregion
 
+        #region ULONG
+        public ulong AsULong(ulong defaultValue = 0)
+        {
+            ulong result = defaultValue;
+            if (ulong.TryParse(this.Value, out result))
+                return result;
+
+            return defaultValue;
+        }
+
+        public ulong GetULong(string name, ulong defaultValue = 0)
+        {
+            DataNode node = this.GetNode(name);
+            if (node != null)
+            {
+                return node.AsULong(defaultValue);
+            }
+
+            return defaultValue;
+        }
+
+        public ulong GetULong(int index, ulong defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsULong(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
         #region INT32
         public int AsInt32(int defaultValue = 0)
         {
