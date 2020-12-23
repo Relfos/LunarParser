@@ -193,25 +193,48 @@ namespace LunarLabs.Parser.JSON
                             {
                                 is_escaped = false;
 
-                                if (c == 'u')
+                                if (c == 'n') // Newline
                                 {
-                                    var hex = "";
-                                    for (int i = 0; i < 4; i++)
+                                    value_content.Append('\n');
+                                }
+                                else if (c == 'r') // Carriage return
+                                {
+                                    value_content.Append('\r');
+                                }
+                                else if (c == 't') // Tab
+                                {
+                                    value_content.Append('\t');
+                                }
+                                else if (c == 'b') // Backspace
+                                {
+                                    value_content.Append('\b');
+                                }
+                                else if (c == 'f') // Form feed
+                                {
+                                    value_content.Append('\f');
+                                }
+                                else
+                                {
+                                    if (c == 'u')
                                     {
-                                        if (index >= contents.Length)
+                                        var hex = "";
+                                        for (int i = 0; i < 4; i++)
                                         {
-                                            throw new Exception($"JSON parsing exception, unexpected end of data");
+                                            if (index >= contents.Length)
+                                            {
+                                                throw new Exception($"JSON parsing exception, unexpected end of data");
+                                            }
+                                            hex += contents[index]; index++;
                                         }
-                                        hex += contents[index]; index++;
+
+                                        ushort unicode_val;
+                                        unicode_val = ushort.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+
+                                        c = (char)unicode_val;
                                     }
 
-                                    ushort unicode_val;
-                                    unicode_val = ushort.Parse(hex, System.Globalization.NumberStyles.HexNumber);
-
-                                    c = (char)unicode_val;
+                                    value_content.Append(c);
                                 }
-
-                                value_content.Append(c);
                             }
                             else
                             if (c == 'n' && mode == InputMode.None)
