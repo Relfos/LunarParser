@@ -298,6 +298,24 @@ namespace LunarParserTests
 
             Assert.IsTrue(hello.Equals(content));
         }
+        [Test]
+        public void TestJSONReaderEscapedSymbols()
+        {
+            var escapedString = "Symbols: \\b \\f \\n \\r \\t \\\\ \\\"";
+            var unescapedString = "Symbols: \b \f \n \r \t \\ \"";
+            var json = "{\"message\": { \"content\": \"" + escapedString + "\"} }";
+
+            var root = JSONReader.ReadFromString(json);
+            Assert.NotNull(root);
+
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            var content = msg.GetString("content");
+            Assert.IsFalse(string.IsNullOrEmpty(content));
+
+            Assert.IsTrue(unescapedString.Equals(content));
+        }
 
         [Test]
         public void TestJSONTypes()
