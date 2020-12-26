@@ -793,8 +793,8 @@ namespace LunarParserTests
             root = root["root"];
             Assert.IsNotNull(root);
 
-            Assert.IsTrue(root["a"].AsLong() == 123);
-            Assert.IsTrue(root.GetLong("a") == 123);
+            Assert.IsTrue(root["a"].AsInt64() == 123);
+            Assert.IsTrue(root.GetInt64("a") == 123);
             
             Assert.IsTrue(root["a"].AsUInt32() == 123);
             Assert.IsTrue(root.GetUInt32("a") == 123);

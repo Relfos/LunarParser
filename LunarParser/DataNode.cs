@@ -324,8 +324,8 @@ namespace LunarLabs.Parser
             return _children[index];
         }
 
-        #region LONG
-        public long AsLong(long defaultValue = 0)
+        #region INT64
+        public long AsInt64(long defaultValue = 0)
         {
             long result = defaultValue;
             if (long.TryParse(this.Value, out result))
@@ -334,31 +334,31 @@ namespace LunarLabs.Parser
             return defaultValue;
         }
 
-        public long GetLong(string name, long defaultValue = 0)
+        public long GetInt64(string name, long defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                return node.AsLong(defaultValue);
+                return node.AsInt64(defaultValue);
             }
 
             return defaultValue;
         }
 
-        public long GetLong(int index, long defaultValue = 0)
+        public long GetInt64(int index, long defaultValue = 0)
         {
             DataNode node = this.GetNodeByIndex(index);
             if (node != null)
             {
-                return node.AsLong(defaultValue);
+                return node.AsInt64(defaultValue);
             }
 
             return defaultValue;
         }
         #endregion
 
-        #region ULONG
-        public ulong AsULong(ulong defaultValue = 0)
+        #region UINT64
+        public ulong AsUInt64(ulong defaultValue = 0)
         {
             ulong result = defaultValue;
             if (ulong.TryParse(this.Value, out result))
@@ -367,23 +367,23 @@ namespace LunarLabs.Parser
             return defaultValue;
         }
 
-        public ulong GetULong(string name, ulong defaultValue = 0)
+        public ulong GetUInt64(string name, ulong defaultValue = 0)
         {
             DataNode node = this.GetNode(name);
             if (node != null)
             {
-                return node.AsULong(defaultValue);
+                return node.AsUInt64(defaultValue);
             }
 
             return defaultValue;
         }
 
-        public ulong GetULong(int index, ulong defaultValue = 0)
+        public ulong GetUInt64(int index, ulong defaultValue = 0)
         {
             DataNode node = this.GetNodeByIndex(index);
             if (node != null)
             {
-                return node.AsULong(defaultValue);
+                return node.AsUInt64(defaultValue);
             }
 
             return defaultValue;
