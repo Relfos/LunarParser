@@ -6,9 +6,9 @@ namespace LunarLabs.Parser.JSON
 {
     public static class JSONWriter
     {
-        private static void Append(DataNode node, StringBuilder sb, bool genBounds = true)
+        private static void Append(DataNode node, DataNode parent, StringBuilder sb, bool genBounds = true)
         {
-            if (node.Name != null)
+            if (node.Name != null && (parent == null || parent.Kind != NodeKind.Array))
             {
                 sb.Append('"');
                 sb.Append(node.Name);
@@ -49,7 +49,7 @@ namespace LunarLabs.Parser.JSON
                             sb.Append(',');
                         }
 
-                        Append(entry, sb, node.Kind == NodeKind.Array);
+                        Append(entry, node, sb, node.Kind == NodeKind.Array);
 
                         index++;
                     }
@@ -66,7 +66,7 @@ namespace LunarLabs.Parser.JSON
         {
             var sb = new StringBuilder();
             if (node.Name != null) sb.Append('{');
-            Append(node, sb);
+            Append(node, null, sb);
             if (node.Name != null) sb.Append('}');
             return sb.ToString();
         }
