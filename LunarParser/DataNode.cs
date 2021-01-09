@@ -62,6 +62,16 @@ namespace LunarLabs.Parser
             get { return GetNodeByIndex(index); }
         }
 
+        public static DataNode CreateString(string name = null)
+        {
+            return new DataNode(NodeKind.String, name);
+        }
+
+        public static DataNode CreateNumber(string name = null)
+        {
+            return new DataNode(NodeKind.Numeric, name);
+        }
+
         public static DataNode CreateObject(string name = null)
         {
             return new DataNode(NodeKind.Object, name);

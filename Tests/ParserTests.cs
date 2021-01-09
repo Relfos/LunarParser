@@ -298,6 +298,7 @@ namespace LunarParserTests
 
             Assert.IsTrue(hello.Equals(content));
         }
+
         [Test]
         public void TestJSONReaderEscapedSymbols()
         {
@@ -315,6 +316,24 @@ namespace LunarParserTests
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
             Assert.IsTrue(unescapedString.Equals(content));
+        }
+
+
+        [Test]
+        public void TestJSONSimpleValue()
+        {
+            var root = DataNode.CreateString("test");
+            root.Value = "hello";
+
+            var json = JSONWriter.WriteToString(root);
+
+            var result = JSONReader.ReadFromString(json);
+
+            Assert.IsTrue(result.ChildCount == 1);
+            result = result.GetNodeByIndex(0);
+
+            Assert.IsTrue(result.Name == root.Name);
+            Assert.IsTrue(result.Value == root.Value);
         }
 
         [Test]
