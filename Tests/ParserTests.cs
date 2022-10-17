@@ -5,7 +5,8 @@ using LunarLabs.Parser.XML;
 using LunarLabs.Parser.YAML;
 using NUnit.Framework;
 using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LunarParserTests
 {
@@ -65,7 +66,7 @@ namespace LunarParserTests
             Assert.IsTrue("videos".Equals(videos.Name));
             Assert.IsTrue(videos.ChildCount.Equals(2));
 
-            var content = videos.GetNode("video");
+            var content = videos.GetNodeByName("video");
             Assert.NotNull(content);
             Assert.IsTrue(content.ChildCount.Equals(5));
         }
@@ -288,7 +289,7 @@ namespace LunarParserTests
             Assert.NotNull(msg);
 
             // alternate way
-            msg = root.GetNode("message");
+            msg = root.GetNodeByName("message");
             Assert.NotNull(msg);
 
             Assert.IsTrue("message".Equals(msg.Name));
@@ -346,31 +347,31 @@ namespace LunarParserTests
             Assert.NotNull(msg);
 
             // alternate way
-            msg = root.GetNode("message");
+            msg = root.GetNodeByName("message");
             Assert.NotNull(msg);
 
             Assert.IsTrue("message".Equals(msg.Name));
 
             var number = msg.GetFloat("number");
             Assert.IsTrue(Math.Abs(number - 3.14159) < 0.001f);
-            Assert.IsTrue(msg.GetNode("number").Kind == NodeKind.Numeric);
+            Assert.IsTrue(msg.GetNodeByName("number").Kind == NodeKind.Numeric);
 
             var negative = msg.GetInt32("negative");
             Assert.IsTrue(negative == -52);
-            Assert.IsTrue(msg.GetNode("negative").Kind == NodeKind.Numeric);
+            Assert.IsTrue(msg.GetNodeByName("negative").Kind == NodeKind.Numeric);
 
             var check = msg.GetBool("check");
             Assert.IsTrue(check);
-            Assert.IsTrue(msg.GetNode("check").Kind == NodeKind.Boolean);
+            Assert.IsTrue(msg.GetNodeByName("check").Kind == NodeKind.Boolean);
 
-            var item = msg.GetNode("item");
+            var item = msg.GetNodeByName("item");
             Assert.IsNotNull(item);
-            Assert.IsTrue(msg.GetNode("item").Kind == NodeKind.Null);
+            Assert.IsTrue(msg.GetNodeByName("item").Kind == NodeKind.Null);
             Assert.IsTrue(string.IsNullOrEmpty(item.Value));
 
             var number2 = msg.GetFloat("science");
             Assert.IsTrue(Math.Abs(number2 - (-1.0e-5)) < 0.001f);
-            Assert.IsTrue(msg.GetNode("science").Kind == NodeKind.Numeric);
+            Assert.IsTrue(msg.GetNodeByName("science").Kind == NodeKind.Numeric);
         }
 
         [Test]
@@ -383,7 +384,7 @@ namespace LunarParserTests
             Assert.NotNull(msg);
 
             // alternate way
-            msg = root.GetNode("message");
+            msg = root.GetNodeByName("message");
             Assert.NotNull(msg);
 
             Assert.IsTrue("message".Equals(msg.Name));
@@ -561,7 +562,7 @@ namespace LunarParserTests
             root = XMLReader.ReadFromString(xml);
             Assert.NotNull(root);
 
-            var test = root.GetNode("test");
+            var test = root.GetNodeByName("test");
             Assert.IsTrue("test".Equals(test.Name));
 
             var first = test.GetDateTime("first");
@@ -611,10 +612,10 @@ namespace LunarParserTests
             root = XMLReader.ReadFromString(xml);
             Assert.NotNull(root);
 
-            var test = root.GetNode("test");
+            var test = root.GetNodeByName("test");
             Assert.IsTrue("test".Equals(test.Name));
 
-            var content = test.GetNode("color");
+            var content = test.GetNodeByName("color");
             Assert.NotNull(content);
             Assert.IsTrue(content.ChildCount == 4);
 
@@ -693,10 +694,10 @@ namespace LunarParserTests
             root = XMLReader.ReadFromString(xml);
             Assert.NotNull(root);
 
-            var test = root.GetNode("test");
+            var test = root.GetNodeByName("test");
             Assert.IsTrue("test".Equals(test.Name));
 
-            var content = test.GetNode("colorgroup");
+            var content = test.GetNodeByName("colorgroup");
             Assert.NotNull(content);
             Assert.IsTrue(content.ChildCount == 2);
 
@@ -894,6 +895,88 @@ namespace LunarParserTests
 
             s = root.GetNodeByIndex(2).AsString();
             Assert.IsTrue(s.Equals("third"));
+        }
+
+        [Test]
+        public void TestAsObject()
+        {
+            var root = DataNode.CreateObject("temp");
+            root.AddField("hello", "world");
+            root.AddField("number", "4");
+            root.AddField("bool", true);
+
+            Assert.IsTrue(root.ChildCount == 3);
+
+            var s = root.GetObject<string>("hello", "");
+            Assert.IsTrue(s.Equals("world"));
+
+            var n = root.GetObject<int>("number", 0);
+            Assert.IsTrue(n == 4);
+
+            var b = root.GetObject<bool>("bool", false);
+            Assert.IsTrue(b == true);
+        }
+
+        [Test]
+        public void TestNodeToDictionary()
+        {
+            var dic = new Dictionary<string, int>();
+
+            dic.Add("one", 1);
+            dic.Add("two", 2);
+            dic.Add("three", 3);
+
+            var root = dic.FromDictionary("temp");
+
+            Assert.IsTrue(root.ChildCount == dic.Count);
+
+            foreach (var entry in dic)
+            {
+                var val = root.GetInt32(entry.Key);
+
+                Assert.IsTrue(val == entry.Value);
+            }
+
+            var other = root.ToDictionary<int>("temp");
+            Assert.IsTrue(other.Count == dic.Count);
+
+            foreach (var entry in dic)
+            {
+                var val = other[entry.Key];
+
+                Assert.IsTrue(val == entry.Value);
+            }
+        }
+
+        [Test]
+        public void TestNodeToHashSet()
+        {
+            var set = new HashSet<string>();
+
+            set.Add("one");
+            set.Add("two");
+            set.Add("three");
+
+            var root = set.FromHashSet<string>("temp");
+
+            Assert.IsTrue(root.ChildCount == set.Count);
+
+            foreach (var entry in set)
+            {
+                Assert.IsTrue(root.Children.Any(x => x.Value == entry));
+            }
+
+            var other = root.ToHashSet<string>("temp");
+            Assert.IsTrue(other.Count == set.Count);
+
+            foreach (var entry in set)
+            {
+                Assert.IsTrue(other.Contains(entry));
+            }
+
+            var node = root.GetNodeByIndex(1);
+            Assert.IsTrue(root.RemoveNode(node));
+            Assert.IsTrue(root.ChildCount == set.Count - 1);
         }
 
         #endregion
