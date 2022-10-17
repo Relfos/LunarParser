@@ -32,7 +32,7 @@ namespace LunarLabs.Parser.CSV
                 index = 0;
                 foreach (var fieldName in header)
                 {
-                    var field = item.GetNode(fieldName);
+                    var field = item.GetNodeByName(fieldName);
 
                     if (index > 0)
                     {

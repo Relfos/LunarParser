@@ -54,7 +54,7 @@ namespace LunarLabs.Parser
 
         public DataNode this[string name]
         {
-            get { return GetNode(name); }
+            get { return GetNodeByName(name); }
         }
 
         public DataNode this[int index]
@@ -109,6 +109,33 @@ namespace LunarLabs.Parser
 
             return "[Null]";
         }
+
+        public bool RemoveNode(DataNode node)
+        {
+            if (node == null)
+            {
+                return false;
+            }
+
+            var count = _children.Count;
+
+            _children.Remove(node);
+
+            return (_children.Count < count);
+        }
+
+        public bool RemoveNodeByIndex(int index)
+        {
+            if (index < 0 || index >= _children.Count)
+            {
+                return false;
+            }
+
+            _children.RemoveAt(index);
+
+            return true;
+        }
+
 
         public DataNode AddNode(DataNode node)
         {
@@ -267,7 +294,7 @@ namespace LunarLabs.Parser
 
         public bool HasNode(string name, int index = 0)
         {
-            return GetNode(name, index) != null;
+            return GetNodeByName(name, index) != null;
         }
 
         // internal auxiliary
@@ -301,7 +328,13 @@ namespace LunarLabs.Parser
         }
 
 
+        [Obsolete("GetNode is deprecated, please use GetNodeByName instead.")]
         public DataNode GetNode(string name, int index = 0)
+        {
+            return GetNodeByName(name, index);
+        }
+
+        public DataNode GetNodeByName(string name, int index = 0)
         {
             int n = 0;
 
@@ -346,7 +379,7 @@ namespace LunarLabs.Parser
 
         public long GetInt64(string name, long defaultValue = 0)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsInt64(defaultValue);
@@ -379,7 +412,7 @@ namespace LunarLabs.Parser
 
         public ulong GetUInt64(string name, ulong defaultValue = 0)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsUInt64(defaultValue);
@@ -412,7 +445,7 @@ namespace LunarLabs.Parser
 
         public int GetInt32(string name, int defaultValue = 0)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsInt32(defaultValue);
@@ -445,7 +478,7 @@ namespace LunarLabs.Parser
 
         public uint GetUInt32(string name, uint defaultValue = 0)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsUInt32(defaultValue);
@@ -467,7 +500,7 @@ namespace LunarLabs.Parser
 
         public byte GetByte(string name, byte defaultValue = 0)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsByte(defaultValue);
@@ -500,7 +533,7 @@ namespace LunarLabs.Parser
 
         public sbyte GetSByte(string name, sbyte defaultValue = 0)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsSByte(defaultValue);
@@ -542,7 +575,7 @@ namespace LunarLabs.Parser
 
         public T GetEnum<T>(string name, T defaultValue = default(T)) where T : IConvertible
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsEnum<T>(defaultValue);
@@ -581,7 +614,7 @@ namespace LunarLabs.Parser
 
         public bool GetBool(string name, bool defaultValue = false)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsBool(defaultValue);
@@ -616,7 +649,7 @@ namespace LunarLabs.Parser
 
         public float GetFloat(string name, float defaultValue = 0)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsFloat(defaultValue);
@@ -651,7 +684,7 @@ namespace LunarLabs.Parser
 
         public double GetDouble(string name, double defaultValue = 0)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsDouble(defaultValue);
@@ -686,7 +719,7 @@ namespace LunarLabs.Parser
 
         public Decimal GetDecimal(string name, decimal defaultValue = 0)
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsDecimal(defaultValue);
@@ -718,7 +751,7 @@ namespace LunarLabs.Parser
 
         public string GetString(string name, string defaultValue = "")
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.Value;
@@ -760,10 +793,90 @@ namespace LunarLabs.Parser
 
         public DateTime GetDateTime(string name, DateTime defaultValue = default(DateTime))
         {
-            DataNode node = this.GetNode(name);
+            DataNode node = this.GetNodeByName(name);
             if (node != null)
             {
                 return node.AsDateTime(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region GENERICS
+        public T AsObject<T>()
+        {
+            var type = typeof(T);
+
+            if (type == typeof(int))
+            {
+                return (T)(object)this.AsInt32();
+            }
+
+            if (type == typeof(uint))
+            {
+                return (T)(object)this.AsUInt32();
+            }
+
+            if (type == typeof(string))
+            {
+                return (T)(object)this.AsString();
+            }
+
+            if (type == typeof(bool))
+            {
+                return (T)(object)this.AsBool();
+            }
+
+            if (type == typeof(DateTime))
+            {
+                return (T)(object)this.AsDateTime();
+            }
+
+            if (type == typeof(float))
+            {
+                return (T)(object)this.AsFloat();
+            }
+
+            if (type == typeof(decimal))
+            {
+                return (T)(object)this.AsDecimal();
+            }
+
+            if (type == typeof(byte))
+            {
+                return (T)(object)this.AsByte();
+            }
+
+            if (type == typeof(sbyte))
+            {
+                return (T)(object)this.AsSByte();
+            }
+
+            if (type == typeof(double))
+            {
+                return (T)(object)this.AsDouble();
+            }
+
+            if (type == typeof(Int64))
+            {
+                return (T)(object)this.AsInt64();
+            }
+
+            if (type == typeof(UInt64))
+            {
+                return (T)(object)this.AsUInt64();
+            }
+
+            return default(T);
+        }
+
+        public T GetObject<T>(string name, T defaultValue)
+        {
+            DataNode node = this.GetNodeByName(name);
+            if (node != null)
+            {
+                return node.AsObject<T>();
             }
 
             return defaultValue;
