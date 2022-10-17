@@ -30,19 +30,20 @@ namespace LunarLabs.Parser
         /// <summary>
         /// Converts a DataSource to a Dictionary
         /// </summary>
-        public static Dictionary<string, string> ToDictionary(this DataNode node, string name)
+        public static Dictionary<string, T> ToDictionary<T>(this DataNode node, string name)
         {
             if (node == null)
             {
                 return null;
             }
 
-            var result = new Dictionary<string, string>();
+            var result = new Dictionary<string, T>();
+
             foreach (var child in node.Children)
             {
                 if (!string.IsNullOrEmpty(child.Value))
                 {
-                    result[child.Name] = child.Value;
+                    result[child.Name] = child.AsObject<T>();
                 }
             }
             return result;
@@ -359,13 +360,38 @@ namespace LunarLabs.Parser
                 }
                 else
                 {
-                    var valNode = node.GetNode(field.Name);
+                    var valNode = node.GetNodeByName(field.Name);
                     object val = valNode.ToObject(fieldType);
                     field.SetValue(obj, val);
                 }
             }
 
             return Convert.ChangeType(obj, objectType);
+        }
+
+        public static DataNode FromHashSet<T>(this HashSet<T> set, string name)
+        {
+            var result = DataNode.CreateArray(name);
+
+            foreach (var item in set)
+            {
+                result.AddValue(item);
+            }
+
+            return result;
+        }
+
+        public static HashSet<T> ToHashSet<T>(this DataNode node, string name)
+        {
+            var set = new HashSet<T>();
+
+            foreach (var entry in node.Children)
+            {
+                var item = entry.AsObject<T>();
+                set.Add(item);
+            }
+
+            return set;
         }
 
     }
