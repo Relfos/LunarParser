@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Xml.Linq;
 
 namespace LunarLabs.Parser
 {
@@ -54,7 +55,15 @@ namespace LunarLabs.Parser
 
         public DataNode this[string name]
         {
-            get { return GetNodeByName(name); }
+            get { 
+                var node = GetNodeByName(name);
+                if (node == null)
+                {
+                    return this.AddEmptyNode(name);
+                }
+
+                return node;
+            }
         }
 
         public DataNode this[int index]
@@ -124,6 +133,12 @@ namespace LunarLabs.Parser
             return (_children.Count < count);
         }
 
+        public bool RemoveNodeByName(string name)
+        {
+            var node = GetNodeByName(name);
+            return RemoveNode(node)
+;        }
+
         public bool RemoveNodeByIndex(int index)
         {
             if (index < 0 || index >= _children.Count)
@@ -147,6 +162,12 @@ namespace LunarLabs.Parser
             this._children.Add(node);
             node.Parent = this;
             return node;
+        }
+
+        public DataNode AddEmptyNode(string name)
+        {
+            var node = DataNode.CreateObject(name);
+            return AddNode(node);
         }
 
         private static readonly long epochTicks = new DateTime(1970, 1, 1).Ticks;
@@ -175,6 +196,27 @@ namespace LunarLabs.Parser
             this.AddNode(child);
             return child;
         }
+
+        public DataNode SetField(string name, object value)
+        {
+            var node = GetNodeByName(name);
+
+            if (node == null)
+            {
+                return AddField(name, value);
+            }
+
+            node.SetValue(value);
+            
+            return node;
+        }
+
+        public void SetValue(object value)
+        {
+            NodeKind kind;
+            this.Value = ConvertValue(value, out kind);
+        }
+
 
 #if DATETIME_AS_TIMESTAMPS
         internal static DateTime FromTimestamp(long unixTimeStamp)

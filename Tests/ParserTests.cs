@@ -13,6 +13,41 @@ namespace LunarParserTests
     [TestFixture]
     public class ParserTests
     {
+        [Test]
+        public void TestAddAndRemove()
+        {
+            var root = DataNode.CreateArray(null);
+            root.AddField("hello", "dog");
+            Assert.NotNull(root.ChildCount == 1);
+
+            root.SetField("hello", "cat");
+            Assert.NotNull(root.ChildCount == 1);
+
+            root.RemoveNodeByName("hello");
+            Assert.NotNull(root.ChildCount == 0);
+        }
+
+        [Test]
+        public void TestLongPath()
+        {
+            var root = DataNode.CreateObject("test");
+
+            root["test"]["user"]["name"].SetValue("mr.doggo");
+            root["test"]["user"]["age"].SetValue(69);
+
+            Assert.NotNull(root.ChildCount == 1);
+
+            var node = root["test"]["user"];
+            Assert.NotNull(node.ChildCount == 2);
+
+            var name = node.GetString("name");
+            Assert.IsTrue(name == "mr.doggo");
+
+            var age = node.GetInt32("age");
+            Assert.IsTrue(age == 69);
+        }
+
+
         #region XML
         [Test]
         public void TestXMLReader()
