@@ -99,8 +99,23 @@ var xml = XMLWriter.WriteToString(msg);
 Console.WriteLine("XML: " + xml);
 
 // you can also do the opposite...
-dic = data.ToDictionary();
+dic = data.ToDictionary<string>();
 ```
+
+```c#
+// converting a hashset to a data node
+var set = new HashSet<string>();
+
+set.Add("one");
+set.Add("two");
+set.Add("three");
+
+var node = set.FromHashSet<string>("my_hashset_name");
+
+// you can also do the opposite...
+dic = node.ToHashSet<string>();
+```
+
 
 ```c#
 // Conversion between formats
