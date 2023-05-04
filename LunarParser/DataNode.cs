@@ -597,7 +597,13 @@ namespace LunarLabs.Parser
         #endregion
 
         #region ENUM
-        public T AsEnum<T>(T defaultValue = default(T)) where T : IConvertible
+
+        public T AsEnum<T>(T defaultValue = default(T)) where T : Enum
+        {
+            return _AsEnum<T>(defaultValue);
+        }
+
+        public T _AsEnum<T>(T defaultValue = default(T))
         {
             try
             {
@@ -615,7 +621,7 @@ namespace LunarLabs.Parser
             return defaultValue;
         }
 
-        public T GetEnum<T>(string name, T defaultValue = default(T)) where T : IConvertible
+        public T GetEnum<T>(string name, T defaultValue = default(T)) where T : Enum
         {
             DataNode node = this.GetNodeByName(name);
             if (node != null)
@@ -626,7 +632,7 @@ namespace LunarLabs.Parser
             return defaultValue;
         }
 
-        public T GetEnum<T>(int index, T defaultValue = default(T)) where T : IConvertible
+        public T GetEnum<T>(int index, T defaultValue = default(T)) where T : Enum
         {
             DataNode node = this.GetNodeByIndex(index);
             if (node != null)
@@ -908,6 +914,11 @@ namespace LunarLabs.Parser
             if (type == typeof(UInt64))
             {
                 return (T)(object)this.AsUInt64();
+            }
+
+            if (type.IsEnum)
+            {
+                return (T)this._AsEnum<T>();
             }
 
             return default(T);
