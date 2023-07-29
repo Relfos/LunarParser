@@ -161,8 +161,10 @@ However note that those methods are still experimental, and currently they won't
 ## XML format
 
 When saving in XML format, by default XMLWriter will save any node that contains zero childs as an attribute instead of full XML node.
-If this is not desirable, pass true as argument to the expand paramater of XMLWriter.WriteToString
+If this is not desirable, pass true as argument to the expand parameter of XMLWriter.WriteToString
 
+As default, writing XML does not support escaping characters, which can produce invalid XML depending on your input data.
+If you need this, please pass true to the parameter "escape" of XMLWriter.WriteToString().
 
 ## CSV format
 
