@@ -84,7 +84,15 @@ namespace LunarParserTests
             var content = msg.Value;
             Assert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue("Hello&world!".Equals(content));
+            var expected = "Hello&world!";
+            Assert.IsTrue(content.Equals(expected));
+
+            root = DataNode.CreateObject("message");
+            Assert.NotNull(root);
+            root.Value = expected;
+
+            var xml2 = XMLWriter.WriteToString(root, escape: true).Trim();
+            Assert.IsTrue(xml2.Equals(xml));
         }
 
         [Test]

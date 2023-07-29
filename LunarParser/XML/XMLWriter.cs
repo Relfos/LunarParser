@@ -8,16 +8,16 @@ namespace LunarLabs.Parser.XML
     public class XMLWriter
 
     {
-        public static string WriteToString(DataNode node, bool expand = false)
+        public static string WriteToString(DataNode node, bool expand = false, bool escape = false)
         {
             StringBuilder builder = new StringBuilder();
 
-            WriteNode(builder, node, 0, expand);
+            WriteNode(builder, node, 0, expand, escape);
 
             return builder.ToString();
         }
 
-        private static void WriteNode(StringBuilder buffer, DataNode node, int tabs, bool expand)
+        private static void WriteNode(StringBuilder buffer, DataNode node, int tabs, bool expand, bool escape)
         {
             for (int i = 0; i < tabs; i++)
             {
@@ -41,7 +41,7 @@ namespace LunarLabs.Parser.XML
                 buffer.Append(child.Name);
                 buffer.Append('=');
                 buffer.Append('"');
-                buffer.Append(child.Value);
+                buffer.Append(EscapeXML(child.Value, escape));
                 buffer.Append('"');
 
                 processedChildren++;
@@ -80,7 +80,7 @@ namespace LunarLabs.Parser.XML
                         continue;
                     }
 
-                    WriteNode(buffer, child, tabs + 1, expand);
+                    WriteNode(buffer, child, tabs + 1, expand, escape);
                 }
 
                 for (int i = 0; i < tabs; i++)
@@ -91,7 +91,7 @@ namespace LunarLabs.Parser.XML
 
             if (node.Value != null)
             {
-                buffer.Append(node.Value);
+                buffer.Append(EscapeXML(node.Value, escape));
             }
 
             buffer.Append('<');
@@ -101,6 +101,31 @@ namespace LunarLabs.Parser.XML
             buffer.AppendLine();
         }
 
+        private static string EscapeXML(string content, bool escape)
+        {
+            if (!escape)
+            {
+                return content;
+            }
+
+            var sb = new StringBuilder();
+            foreach (var ch in content)
+            {
+                switch (ch)
+                {
+                    case '\'': sb.Append("&apos;"); break;
+                    case '"': sb.Append("&quot;"); break;
+                    case '<': sb.Append("&lt;"); break;
+                    case '>': sb.Append("&gt;"); break;
+                    case '&': sb.Append("&amp;"); break;
+
+                    default:
+                        sb.Append(ch);
+                        break;
+                }
+            }
+            return sb.ToString();
+        }
     }
 
 }
