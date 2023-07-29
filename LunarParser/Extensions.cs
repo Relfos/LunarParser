@@ -381,14 +381,28 @@ namespace LunarLabs.Parser
             return result;
         }
 
-        public static HashSet<T> ToHashSet<T>(this DataNode node, string name)
+        public static HashSet<T> ToHashSet<T>(this DataNode node, string name = null)
         {
             var set = new HashSet<T>();
 
             foreach (var entry in node.Children)
             {
-                var item = entry.AsObject<T>();
-                set.Add(item);
+                bool valid;
+
+                if (string.IsNullOrEmpty(name))
+                {
+                    valid = true;
+                }
+                else
+                {
+                    valid = entry.Name.Equals(name, StringComparison.OrdinalIgnoreCase);
+                }
+
+                if (valid)
+                {
+                    var item = entry.AsObject<T>();
+                    set.Add(item);
+                }
             }
 
             return set;

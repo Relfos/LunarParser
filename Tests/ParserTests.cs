@@ -69,6 +69,25 @@ namespace LunarParserTests
         }
 
         [Test]
+        public void TestXMLEscaping()
+        {
+            var xml = "<message>Hello&amp;world!</message>";
+
+            var root = XMLReader.ReadFromString(xml);
+            Assert.NotNull(root);
+
+            var msg = root["message"];
+            Assert.NotNull(msg);
+
+            Assert.IsTrue("message".Equals(msg.Name));
+
+            var content = msg.Value;
+            Assert.IsFalse(string.IsNullOrEmpty(content));
+
+            Assert.IsTrue("Hello&world!".Equals(content));
+        }
+
+        [Test]
         public void TestXMLWriter()
         {
             var root = DataNode.CreateObject("data");
@@ -1001,7 +1020,7 @@ namespace LunarParserTests
                 Assert.IsTrue(root.Children.Any(x => x.Value == entry));
             }
 
-            var other = root.ToHashSet<string>("temp");
+            var other = root.ToHashSet<string>();
             Assert.IsTrue(other.Count == set.Count);
 
             foreach (var entry in set)

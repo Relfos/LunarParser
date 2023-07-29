@@ -19,6 +19,7 @@ namespace LunarLabs.Parser.XML
             Content,
             CData,
             CDataClose,
+            Escape,
         }
 
         private static bool CDataAt(string contents, int index)
@@ -54,8 +55,9 @@ namespace LunarLabs.Parser.XML
             var prevState = State.Next;
             char c;
 
-            StringBuilder name_content = new StringBuilder();
-            StringBuilder value_content = new StringBuilder();
+            var name_content = new StringBuilder();
+            var value_content = new StringBuilder();
+            var escape_content = new StringBuilder();
 
             int rewind_index = index;
 
@@ -336,10 +338,44 @@ namespace LunarLabs.Parser.XML
                             break;
                         }
 
+                    case State.Escape:
+                        switch (c)
+                        {
+                            case ';':
+                                var escaped = escape_content.ToString();
+
+                                char ch;
+
+                                switch (escaped)
+                                {
+                                    case "amp": ch = '&'; break;
+                                    case "lt": ch = '<'; break;
+                                    case "gt": ch = '>'; break;
+                                    case "quot": ch = '"'; break;
+                                    case "apos": ch = '\''; break;
+
+                                    default:  throw new Exception("Invalid escape code detected: " + escaped);
+                                }
+
+                                value_content.Append(ch);
+                                state = State.Content;
+                                break;
+
+                            default:
+                                escape_content.Append(c); 
+                                break;
+                        }
+                        break;
+
                     case State.Content:
                         {
                             switch (c)
                             {
+                                case '&':
+                                    state = State.Escape;
+                                    escape_content.Length = 0;
+                                    break;
+
                                 case '<':
                                     {
                                         if (CDataAt(contents, index))
