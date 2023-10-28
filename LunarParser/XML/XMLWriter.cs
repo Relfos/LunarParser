@@ -19,6 +19,94 @@ namespace LunarLabs.Parser.XML
 
         private static void WriteNode(StringBuilder buffer, DataNode node, int tabs, bool expand, bool escape)
         {
+            if (string.IsNullOrEmpty(node.Name))
+            {
+                throw new Exception("Node cannot have empty name");
+            }
+
+            for (int i = 0; i < tabs; i++)
+            {
+                buffer.Append('\t');
+            }
+
+            buffer.Append('<');
+            buffer.Append(node.Name);
+
+            int processedChildren = 0;
+
+            if (!expand)
+            {
+                foreach (DataNode child in node.Children)
+                {
+                    if (child.Children.Any())
+                    {
+                        continue;
+                    }
+
+                    buffer.Append(' ');
+                    buffer.Append(child.Name);
+                    buffer.Append('=');
+                    buffer.Append('"');
+                    buffer.Append(EscapeXML(child.Value, escape));
+                    buffer.Append('"');
+
+                    processedChildren++;
+                }
+            }
+
+            var finished = processedChildren == node.ChildCount && node.Value == null;
+
+            if (finished)
+            {
+                buffer.Append('/');
+            }
+            buffer.Append('>');
+            buffer.AppendLine();
+
+            if (finished) return;
+
+            if (node.Children.Any())
+            {
+                foreach (DataNode child in node.Children)
+                {
+                    if (!expand && !child.Children.Any())
+                    {
+                        continue;
+                    }
+
+                    WriteNode(buffer, child, tabs + 1, expand, escape);
+                }
+
+                if (node.Value != null)
+                {
+                    if (node.Value.Trim().Length > 0)
+                    {
+                        throw new Exception("Nodes with values cannot have child nodes");
+                    }
+                }
+            }
+            else
+            {
+                buffer.Append(EscapeXML(node.Value, escape));
+            }
+
+            for (int i = 0; i < tabs; i++)
+            {
+                buffer.Append('\t');
+            }
+
+            buffer.Append('<');
+            buffer.Append('/');
+            buffer.Append(node.Name);
+            buffer.Append('>');
+
+            buffer.AppendLine();
+        }
+
+
+        /*
+        private static void WriteNode2(StringBuilder buffer, DataNode node, int tabs, bool expand, bool escape)
+        {
             for (int i = 0; i < tabs; i++)
             {
                 buffer.Append('\t');
@@ -99,11 +187,11 @@ namespace LunarLabs.Parser.XML
             buffer.Append(node.Name);
             buffer.Append('>');
             buffer.AppendLine();
-        }
+        }*/
 
         private static string EscapeXML(string content, bool escape)
         {
-            if (!escape)
+            if (!escape || string.IsNullOrEmpty(content))
             {
                 return content;
             }
