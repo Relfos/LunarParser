@@ -246,6 +246,14 @@ namespace LunarLabs.Parser.XML
                                         break;
                                     }
 
+                                case '&':
+                                    {
+                                        prevState = state;
+                                        state = State.Escape;
+                                        escape_content.Length = 0;
+                                        break;
+                                    }
+
                                 default:
                                     {
                                         value_content.Append(c);
@@ -358,7 +366,7 @@ namespace LunarLabs.Parser.XML
                                 }
 
                                 value_content.Append(ch);
-                                state = State.Content;
+                                state = prevState;
                                 break;
 
                             default:
@@ -372,6 +380,7 @@ namespace LunarLabs.Parser.XML
                             switch (c)
                             {
                                 case '&':
+                                    prevState = state;
                                     state = State.Escape;
                                     escape_content.Length = 0;
                                     break;
@@ -418,5 +427,21 @@ namespace LunarLabs.Parser.XML
 
             } while (true);
         }
+
+        private static string UnescapeXML(string content, bool unescape)
+        {
+            if (!unescape || string.IsNullOrEmpty(content))
+            {
+                return content;
+            }
+
+            return content
+                .Replace("&apos;", "'")
+                .Replace("&quot;", "\"")
+                .Replace("&lt;", "<")
+                .Replace("&gt;", ">")
+                .Replace("&amp;", "&");
+        }
+
     }
 }

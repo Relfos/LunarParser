@@ -8,18 +8,18 @@ namespace LunarLabs.Parser.XML
     public class XMLWriter
 
     {
-        public static string WriteToString(DataNode node, bool expand = false, bool escape = false)
+        public static string WriteToString(DataNode node, bool expand = false, bool escape = false, bool allowEmptyNames = false)
         {
             StringBuilder builder = new StringBuilder();
 
-            WriteNode(builder, node, 0, expand, escape);
+            WriteNode(builder, node, 0, expand, escape, allowEmptyNames);
 
             return builder.ToString();
         }
 
-        private static void WriteNode(StringBuilder buffer, DataNode node, int tabs, bool expand, bool escape)
+        private static void WriteNode(StringBuilder buffer, DataNode node, int tabs, bool expand, bool escape, bool allowEmptyNames)
         {
-            if (string.IsNullOrEmpty(node.Name))
+            if (!allowEmptyNames && string.IsNullOrEmpty(node.Name))
             {
                 throw new Exception("Node cannot have empty name");
             }
@@ -74,7 +74,7 @@ namespace LunarLabs.Parser.XML
                         continue;
                     }
 
-                    WriteNode(buffer, child, tabs + 1, expand, escape);
+                    WriteNode(buffer, child, tabs + 1, expand, escape, allowEmptyNames);
                 }
 
                 if (node.Value != null)
