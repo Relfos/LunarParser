@@ -475,6 +475,72 @@ namespace LunarLabs.Parser
         }
         #endregion
 
+        #region INT16
+        public short AsInt16(short defaultValue = 0)
+        {
+            short result = defaultValue;
+            if (short.TryParse(this.Value, out result))
+                return result;
+
+            return defaultValue;
+        }
+
+        public short GetInt16(string name, short defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByName(name);
+            if (node != null)
+            {
+                return node.AsInt16(defaultValue);
+            }
+
+            return defaultValue;
+        }
+
+        public short GetInt16(int index, short defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsInt16(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
+        #region UINT16
+        public ushort AsUInt16(ushort defaultValue = 0)
+        {
+            ushort result = defaultValue;
+            if (ushort.TryParse(this.Value, out result))
+                return result;
+
+            return defaultValue;
+        }
+
+        public ushort GetUInt16(string name, ushort defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByName(name);
+            if (node != null)
+            {
+                return node.AsUInt16(defaultValue);
+            }
+
+            return defaultValue;
+        }
+
+        public ushort GetUInt16(int index, ushort defaultValue = 0)
+        {
+            DataNode node = this.GetNodeByIndex(index);
+            if (node != null)
+            {
+                return node.AsUInt16(defaultValue);
+            }
+
+            return defaultValue;
+        }
+        #endregion
+
         #region INT32
         public int AsInt32(int defaultValue = 0)
         {
@@ -619,6 +685,18 @@ namespace LunarLabs.Parser
             }
 
             return defaultValue;
+        }
+
+        public object _AsEnum(Type type)
+        {
+            try
+            {
+                return Enum.Parse(type, this.Value, /* ignorecase */ true);
+            }
+            catch (Exception)
+            {
+                return Enum.Parse(type, "0", /* ignorecase */ true);
+            }
         }
 
         public T GetEnum<T>(string name, T defaultValue = default(T)) where T : Enum
@@ -851,77 +929,92 @@ namespace LunarLabs.Parser
         }
         #endregion
 
+
         #region GENERICS
         public T AsObject<T>()
         {
             var type = typeof(T);
+            return (T)(object)AsObject(type);
+        }
 
-            if (type == typeof(int))
-            {
-                return (T)(object)this.AsInt32();
-            }
-
-            if (type == typeof(uint))
-            {
-                return (T)(object)this.AsUInt32();
-            }
-
+        public object AsObject(Type type)
+        {
             if (type == typeof(string))
             {
-                return (T)(object)this.AsString();
+                return this.AsString();
             }
 
             if (type == typeof(bool))
             {
-                return (T)(object)this.AsBool();
+                return this.AsBool();
+            }
+
+            if (type == typeof(int))
+            {
+                return this.AsInt32();
+            }
+
+            if (type == typeof(uint))
+            {
+                return this.AsUInt32();
             }
 
             if (type == typeof(DateTime))
             {
-                return (T)(object)this.AsDateTime();
+                return this.AsDateTime();
             }
 
             if (type == typeof(float))
             {
-                return (T)(object)this.AsFloat();
-            }
-
-            if (type == typeof(decimal))
-            {
-                return (T)(object)this.AsDecimal();
-            }
-
-            if (type == typeof(byte))
-            {
-                return (T)(object)this.AsByte();
-            }
-
-            if (type == typeof(sbyte))
-            {
-                return (T)(object)this.AsSByte();
+                return this.AsFloat();
             }
 
             if (type == typeof(double))
             {
-                return (T)(object)this.AsDouble();
+                return this.AsDouble();
+            }
+
+            if (type == typeof(decimal))
+            {
+                return this.AsDecimal();
+            }
+
+            if (type == typeof(byte))
+            {
+                return this.AsByte();
+            }
+
+            if (type == typeof(sbyte))
+            {
+                return this.AsSByte();
             }
 
             if (type == typeof(Int64))
             {
-                return (T)(object)this.AsInt64();
+                return this.AsInt64();
             }
 
             if (type == typeof(UInt64))
             {
-                return (T)(object)this.AsUInt64();
+                return this.AsUInt64();
+            }
+
+            if (type == typeof(short))
+            {
+                return this.AsInt16();
+            }
+
+            if (type == typeof(ushort))
+            {
+                return this.AsUInt16();
             }
 
             if (type.IsEnum)
             {
-                return (T)this._AsEnum<T>();
+                return this._AsEnum(type);
             }
 
-            return default(T);
+            return null;
         }
 
         public T GetObject<T>(string name, T defaultValue)
