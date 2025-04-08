@@ -4,6 +4,7 @@ using LunarLabs.Parser.JSON;
 using LunarLabs.Parser.XML;
 using LunarLabs.Parser.YAML;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +19,13 @@ namespace LunarParserTests
         {
             var root = DataNode.CreateArray(null);
             root.AddField("hello", "dog");
-            Assert.NotNull(root.ChildCount == 1);
+            ClassicAssert.NotNull(root.ChildCount == 1);
 
             root.SetField("hello", "cat");
-            Assert.NotNull(root.ChildCount == 1);
+            ClassicAssert.NotNull(root.ChildCount == 1);
 
             root.RemoveNodeByName("hello");
-            Assert.NotNull(root.ChildCount == 0);
+            ClassicAssert.NotNull(root.ChildCount == 0);
         }
 
         [Test]
@@ -35,16 +36,16 @@ namespace LunarParserTests
             root["test"]["user"]["name"].SetValue("mr.doggo");
             root["test"]["user"]["age"].SetValue(69);
 
-            Assert.NotNull(root.ChildCount == 1);
+            ClassicAssert.NotNull(root.ChildCount == 1);
 
             var node = root["test"]["user"];
-            Assert.NotNull(node.ChildCount == 2);
+            ClassicAssert.NotNull(node.ChildCount == 2);
 
             var name = node.GetString("name");
-            Assert.IsTrue(name == "mr.doggo");
+            ClassicAssert.IsTrue(name == "mr.doggo");
 
             var age = node.GetInt32("age");
-            Assert.IsTrue(age == 69);
+            ClassicAssert.IsTrue(age == 69);
         }
 
 
@@ -55,17 +56,17 @@ namespace LunarParserTests
             var xml = "<message><content>Hello world!</content></message>";
 
             var root = XMLReader.ReadFromString(xml);
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue("Hello world!".Equals(content));
+            ClassicAssert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
@@ -74,32 +75,32 @@ namespace LunarParserTests
             var xml = "<message>Hello&amp;world!</message>";
 
             var root = XMLReader.ReadFromString(xml);
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.Value;
-            Assert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
 
             var expected = "Hello&world!";
-            Assert.IsTrue(content.Equals(expected));
+            ClassicAssert.IsTrue(content.Equals(expected));
 
             root = DataNode.CreateObject("message");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             root.Value = expected;
 
             var xml2 = XMLWriter.WriteToString(root, escape: true).Trim();
-            Assert.IsTrue(xml2.Equals(xml));
+            ClassicAssert.IsTrue(xml2.Equals(xml));
         }
 
         [Test]
         public void TestXMLWriter()
         {
             var root = DataNode.CreateObject("data");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var temp = DataNode.CreateObject("entry");
             temp.AddField("name", "xx");
@@ -108,81 +109,81 @@ namespace LunarParserTests
             var xml = XMLWriter.WriteToString(root);
             var expected = "<data>\n\t<entry name=\"xx\" />\n</data>\n";
             expected = expected.Replace("\n", Environment.NewLine);
-            Assert.IsTrue(xml == expected);
+            ClassicAssert.IsTrue(xml == expected);
 
             xml = XMLWriter.WriteToString(root, true);
             expected = "<data>\n\t<entry>\n\t\t<name>xx</name>\n\t</entry>\n</data>\n";
             expected = expected.Replace("\n", Environment.NewLine);
-            Assert.IsTrue(xml == expected);
+            ClassicAssert.IsTrue(xml == expected);
         }
 
         [Test]
         public void TestXMLReaderFull()
         {
             var root = XMLReader.ReadFromString("<?xml version=\"1.0\" encoding=\"utf-8\"?><!-- In this collection, we will keep each title \"as is\" --><videos><video><title>The Distinguished Gentleman</title><director>Jonathan Lynn</director><length>112 Minutes</length><format>DVD</format><rating>R</rating></video><video><title>Her Alibi</title><director>Bruce Beresford</director><length>94 Mins</length><format>DVD</format><rating>PG-13</rating> </video></videos>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var videos = root["videos"];
-            Assert.NotNull(videos);
+            ClassicAssert.NotNull(videos);
 
-            Assert.IsTrue("videos".Equals(videos.Name));
-            Assert.IsTrue(videos.ChildCount.Equals(2));
+            ClassicAssert.IsTrue("videos".Equals(videos.Name));
+            ClassicAssert.IsTrue(videos.ChildCount.Equals(2));
 
             var content = videos.GetNodeByName("video");
-            Assert.NotNull(content);
-            Assert.IsTrue(content.ChildCount.Equals(5));
+            ClassicAssert.NotNull(content);
+            ClassicAssert.IsTrue(content.ChildCount.Equals(5));
         }
 
         [Test]
         public void TestXMLComments()
         {
             var root = XMLReader.ReadFromString("<message><!--This is a comment, will be ignored--><content>Hello world!</content></message>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var msg = root["message"];
-            Assert.NotNull(msg);
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.NotNull(msg);
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
-            Assert.IsTrue("Hello world!".Equals(content));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
         public void TestXMLEmpty()
         {
             var root = XMLReader.ReadFromString("");
-            Assert.True(root.ChildCount.Equals(0));
+            ClassicAssert.True(root.ChildCount.Equals(0));
             root = XMLReader.ReadFromString("    ");
-            Assert.True(root.ChildCount.Equals(0));
+            ClassicAssert.True(root.ChildCount.Equals(0));
             root = XMLReader.ReadFromString("<!---->");
-            Assert.True(root.ChildCount.Equals(0));
+            ClassicAssert.True(root.ChildCount.Equals(0));
             root = XMLReader.ReadFromString("<!-- nsbdghfds <msg>hello</msg> fdgf -->");
-            Assert.True(root.ChildCount.Equals(0));
+            ClassicAssert.True(root.ChildCount.Equals(0));
             root = XMLReader.ReadFromString("<!-- <aa /> -->");
-            Assert.True(root.ChildCount.Equals(0));
+            ClassicAssert.True(root.ChildCount.Equals(0));
         }
 
         [Test]
         public void TestXMLRoot()
         {
             var root = XMLReader.ReadFromString("<message></message>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             var msg = root["message"];
-            Assert.NotNull(msg);
-            Assert.IsEmpty(msg.Value);
+            ClassicAssert.NotNull(msg);
+            ClassicAssert.IsEmpty(msg.Value);
 
             root = XMLReader.ReadFromString("<message>aaa</message>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             msg = root["message"];
-            Assert.NotNull(msg);
-            Assert.AreEqual("aaa", msg.Value);
+            ClassicAssert.NotNull(msg);
+            ClassicAssert.AreEqual("aaa", msg.Value);
 
             root = XMLReader.ReadFromString("<message><!--aa--></message>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             msg = root["message"];
-            Assert.NotNull(msg);
-            Assert.IsEmpty(msg.Value);
+            ClassicAssert.NotNull(msg);
+            ClassicAssert.IsEmpty(msg.Value);
         }
 
         // Valid in XML
@@ -193,14 +194,14 @@ namespace LunarParserTests
                                                 "<!--df <! - - </ m\"es\"sage > dd=\"aa\" -->" +
                                                 "<content>Hello world!</content>" +
                                                 "<!-- df <!- - </message> --> </message>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
-            Assert.AreEqual("Hello world!", content);
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.AreEqual("Hello world!", content);
         }
 
         // Not strictly valid in XML, but accepted in HTML and others
@@ -210,13 +211,13 @@ namespace LunarParserTests
             var root = XMLReader.ReadFromString("<message><!-- will <-- be ignored-->" +
                                                 "<content> <!--df \" \" <!-- </ message > --> " +
                                                 "Hello world!</content></message>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             var msg = root["message"];
-            Assert.NotNull(msg);
-            Assert.AreEqual("message", msg.Name);
+            ClassicAssert.NotNull(msg);
+            ClassicAssert.AreEqual("message", msg.Name);
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
-            Assert.AreEqual("Hello world!", content.Trim());
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.AreEqual("Hello world!", content.Trim());
         }
 
         [Test]
@@ -224,87 +225,87 @@ namespace LunarParserTests
         {
             var root = XMLReader.ReadFromString("<!--This is a comment, will be ignored--><message>" +
                                                 "<content>Hello world!</content></message>");
-            Assert.NotNull(root);
-            Assert.IsTrue(root.ChildCount.Equals(1));
+            ClassicAssert.NotNull(root);
+            ClassicAssert.IsTrue(root.ChildCount.Equals(1));
 
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue("Hello world!".Equals(content));
+            ClassicAssert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
         public void TestXMLAttributes()
         {
             var root = XMLReader.ReadFromString("<message content=\"Hello world!\"/>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue("Hello world!".Equals(content));
+            ClassicAssert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
         public void TestXMLAttributesIgnored()
         {
             var root = XMLReader.ReadFromString("<message content=\"Hello /> world!\"/>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue("Hello /> world!".Equals(content));
+            ClassicAssert.IsTrue("Hello /> world!".Equals(content));
         }
 
         [Test]
         public void TestXMLText()
         {
             var root = XMLReader.ReadFromString("<message attribute=\"something\">other</message>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var attr = msg.GetString("attribute");
-            Assert.IsTrue("something".Equals(attr));
+            ClassicAssert.IsTrue("something".Equals(attr));
 
-            Assert.IsTrue("other".Equals(msg.Value));
+            ClassicAssert.IsTrue("other".Equals(msg.Value));
         }
 
         [Test]
         public void TestXMLShortTag()
         {
             var root = XMLReader.ReadFromString("<message attribute=\"something\"><go /></message>");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var attr = msg.GetString("attribute");
-            Assert.IsTrue("something".Equals(attr));
+            ClassicAssert.IsTrue("something".Equals(attr));
 
-            Assert.IsTrue(msg.ChildCount == 2);
+            ClassicAssert.IsTrue(msg.ChildCount == 2);
 
             var child = msg.GetNodeByIndex(1);
-            Assert.IsNotNull(child);
-            Assert.IsTrue("go".Equals(child.Name));
-            Assert.IsTrue(string.IsNullOrEmpty(child.Value));
+            ClassicAssert.IsNotNull(child);
+            ClassicAssert.IsTrue("go".Equals(child.Name));
+            ClassicAssert.IsTrue(string.IsNullOrEmpty(child.Value));
         }
 
         [Test]
@@ -314,26 +315,26 @@ namespace LunarParserTests
             var root = XMLReader.ReadFromString(test);
             var msg = root["message"];
             var content = msg.GetString("content");
-            Assert.IsTrue(content.Equals("test<>me"));
+            ClassicAssert.IsTrue(content.Equals("test<>me"));
 
             test = String.Format(@"<message> <content><![CDATA[test<>me]<[]]></content></message>");
             root = XMLReader.ReadFromString(test);
             msg = root["message"];
             content = msg.GetString("content");
-            Assert.IsTrue(content.Equals("test<>me]<["));
+            ClassicAssert.IsTrue(content.Equals("test<>me]<["));
 
             test = String.Format(@"<message><content>![CDATA[testme]]</content></message>");
             root = XMLReader.ReadFromString(test);
             msg = root["message"];
             content = msg.GetString("content");
-            Assert.IsTrue(content.Equals("![CDATA[testme]]"));
+            ClassicAssert.IsTrue(content.Equals("![CDATA[testme]]"));
 
             test = String.Format("<message><content><![CDATA[line1.test<>me\nline2.hello\nthirdline]]></content></message>");
 
             root = XMLReader.ReadFromString(test);
             msg = root["message"];
             content = msg.GetString("content");
-            Assert.IsTrue(content.Equals("line1.test<>me\nline2.hello\nthirdline"));
+            ClassicAssert.IsTrue(content.Equals("line1.test<>me\nline2.hello\nthirdline"));
         }
         #endregion
 
@@ -345,21 +346,21 @@ namespace LunarParserTests
             var json = "{\"message\": { \"content\": \""+hello+"\"} }";
 
             var root = JSONReader.ReadFromString(json);
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
             // alternate way
             msg = root.GetNodeByName("message");
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue(hello.Equals(content));
+            ClassicAssert.IsTrue(hello.Equals(content));
         }
 
         [Test]
@@ -370,15 +371,15 @@ namespace LunarParserTests
             var json = "{\"message\": { \"content\": \"" + escapedString + "\"} }";
 
             var root = JSONReader.ReadFromString(json);
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue(unescapedString.Equals(content));
+            ClassicAssert.IsTrue(unescapedString.Equals(content));
         }
 
 
@@ -392,72 +393,72 @@ namespace LunarParserTests
 
             var result = JSONReader.ReadFromString(json);
 
-            Assert.IsTrue(result.ChildCount == 1);
+            ClassicAssert.IsTrue(result.ChildCount == 1);
             result = result.GetNodeByIndex(0);
 
-            Assert.IsTrue(result.Name == root.Name);
-            Assert.IsTrue(result.Value == root.Value);
+            ClassicAssert.IsTrue(result.Name == root.Name);
+            ClassicAssert.IsTrue(result.Value == root.Value);
         }
 
         [Test]
         public void TestJSONTypes()
         {
             var root = JSONReader.ReadFromString("{\"message\": { \"number\": 3.14159, \"negative\": -52, \"check\":true, \"item\": null, \"science\":-1.0e-5, \"science_alt\":-2.0e+5} }");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
             // alternate way
             msg = root.GetNodeByName("message");
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var number = msg.GetFloat("number");
-            Assert.IsTrue(Math.Abs(number - 3.14159) < 0.001f);
-            Assert.IsTrue(msg.GetNodeByName("number").Kind == NodeKind.Numeric);
+            ClassicAssert.IsTrue(Math.Abs(number - 3.14159) < 0.001f);
+            ClassicAssert.IsTrue(msg.GetNodeByName("number").Kind == NodeKind.Numeric);
 
             var negative = msg.GetInt32("negative");
-            Assert.IsTrue(negative == -52);
-            Assert.IsTrue(msg.GetNodeByName("negative").Kind == NodeKind.Numeric);
+            ClassicAssert.IsTrue(negative == -52);
+            ClassicAssert.IsTrue(msg.GetNodeByName("negative").Kind == NodeKind.Numeric);
 
             var check = msg.GetBool("check");
-            Assert.IsTrue(check);
-            Assert.IsTrue(msg.GetNodeByName("check").Kind == NodeKind.Boolean);
+            ClassicAssert.IsTrue(check);
+            ClassicAssert.IsTrue(msg.GetNodeByName("check").Kind == NodeKind.Boolean);
 
             var item = msg.GetNodeByName("item");
-            Assert.IsNotNull(item);
-            Assert.IsTrue(msg.GetNodeByName("item").Kind == NodeKind.Null);
-            Assert.IsTrue(string.IsNullOrEmpty(item.Value));
+            ClassicAssert.IsNotNull(item);
+            ClassicAssert.IsTrue(msg.GetNodeByName("item").Kind == NodeKind.Null);
+            ClassicAssert.IsTrue(string.IsNullOrEmpty(item.Value));
 
             var number2 = msg.GetFloat("science");
-            Assert.IsTrue(Math.Abs(number2 - (-1.0e-5)) < 0.001f);
-            Assert.IsTrue(msg.GetNodeByName("science").Kind == NodeKind.Numeric);
+            ClassicAssert.IsTrue(Math.Abs(number2 - (-1.0e-5)) < 0.001f);
+            ClassicAssert.IsTrue(msg.GetNodeByName("science").Kind == NodeKind.Numeric);
         }
 
         [Test]
         public void TestJSONArray()
         {
             var root = JSONReader.ReadFromString("{\"message\": { \"content\": [0, 1, 2, 3]} }");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
             // alternate way
             msg = root.GetNodeByName("message");
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var content = msg["content"];
-            Assert.IsTrue(content.ChildCount == 4);
+            ClassicAssert.IsTrue(content.ChildCount == 4);
 
             for (int i = 0; i < 4; i++)
             {
                 var number = content.GetNodeByIndex(i);
-                Assert.IsTrue(i.ToString().Equals(number.Value));
+                ClassicAssert.IsTrue(i.ToString().Equals(number.Value));
             }
         }
 
@@ -470,23 +471,23 @@ namespace LunarParserTests
             root.AddField(null, "2");
 
             var json = JSONWriter.WriteToString(root);
-            Assert.NotNull(json);
+            ClassicAssert.NotNull(json);
 
             var other = JSONReader.ReadFromString(json);
-            Assert.NotNull(other);
+            ClassicAssert.NotNull(other);
 
-            Assert.IsTrue(other.ChildCount == root.ChildCount);
+            ClassicAssert.IsTrue(other.ChildCount == root.ChildCount);
 
             for (int i = 0; i < root.ChildCount; i++)
             {
                 var child = root.GetNodeByIndex(i);
                 var otherChild = other.GetNodeByIndex(i);
 
-                Assert.NotNull(child);
-                Assert.NotNull(otherChild);
+                ClassicAssert.NotNull(child);
+                ClassicAssert.NotNull(otherChild);
 
-                Assert.IsTrue(child.Name == otherChild.Name);
-                Assert.IsTrue(child.Value == otherChild.Value);
+                ClassicAssert.IsTrue(child.Name == otherChild.Name);
+                ClassicAssert.IsTrue(child.Value == otherChild.Value);
             }
         }
 
@@ -498,23 +499,23 @@ namespace LunarParserTests
             root.AddNode(color.ToDataNode());
 
             var json = JSONWriter.WriteToString(root);
-            Assert.NotNull(json);
+            ClassicAssert.NotNull(json);
 
             var other = JSONReader.ReadFromString(json);
-            Assert.NotNull(other);
+            ClassicAssert.NotNull(other);
 
-            Assert.IsTrue(other.ChildCount == root.ChildCount);
+            ClassicAssert.IsTrue(other.ChildCount == root.ChildCount);
 
             for (int i = 0; i < root.ChildCount; i++)
             {
                 var child = root.GetNodeByIndex(i);
                 var otherChild = other.GetNodeByIndex(i);
 
-                Assert.NotNull(child);
-                Assert.NotNull(otherChild);
+                ClassicAssert.NotNull(child);
+                ClassicAssert.NotNull(otherChild);
 
-                Assert.IsTrue(child.Name == otherChild.Name);
-                Assert.IsTrue(child.Value == otherChild.Value);
+                ClassicAssert.IsTrue(child.Name == otherChild.Name);
+                ClassicAssert.IsTrue(child.Value == otherChild.Value);
             }
         }
 
@@ -526,15 +527,15 @@ namespace LunarParserTests
             root.AddField("msg", val);
 
             var json = JSONWriter.WriteToString(root);
-            Assert.NotNull(json);
+            ClassicAssert.NotNull(json);
 
             var other = JSONReader.ReadFromString(json);
-            Assert.NotNull(other);
+            ClassicAssert.NotNull(other);
 
-            Assert.IsTrue(other.ChildCount == root.ChildCount);
+            ClassicAssert.IsTrue(other.ChildCount == root.ChildCount);
 
             var otherVal = other.GetString("msg");
-            Assert.IsTrue(otherVal.Equals(val));
+            ClassicAssert.IsTrue(otherVal.Equals(val));
         }
         #endregion
 
@@ -543,24 +544,24 @@ namespace LunarParserTests
         public void TestYAMLReader()
         {
             var root = YAMLReader.ReadFromString("---\nmessage:\n  content: Hello world!");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var msg = root["message"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
-            Assert.IsTrue("message".Equals(msg.Name));
+            ClassicAssert.IsTrue("message".Equals(msg.Name));
 
             var content = msg.GetString("content");
-            Assert.IsFalse(string.IsNullOrEmpty(content));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(content));
 
-            Assert.IsTrue("Hello world!".Equals(content));
+            ClassicAssert.IsTrue("Hello world!".Equals(content));
         }
 
         [Test]
         public void TestYAMLIdentationBlock()
         {
             var root = YAMLReader.ReadFromString("layout: list\r\ntitle: iDEX Activities\r\nslug: activities\r\ndescription: >\r\n  This page is for blogging activities of iDEX.");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
         }
         #endregion
 
@@ -576,30 +577,30 @@ namespace LunarParserTests
         {
             var csv = "id,name\n1,Dog\n2,\"The \"\"Mr\"\"Cat\"\n399,\"Fish,Blue\"\n412,\"Heavy Bird\"";
             var root = CSVReader.ReadFromString(csv);
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
-            Assert.IsTrue(root.ChildCount == 4);
+            ClassicAssert.IsTrue(root.ChildCount == 4);
 
             var animals = root.ToArray<Animal>();
-            Assert.IsTrue(animals.Length == 4);
+            ClassicAssert.IsTrue(animals.Length == 4);
 
             Animal animal;
 
             animal = animals[0];
-            Assert.IsTrue(1.Equals(animal.id));
-            Assert.IsTrue("Dog".Equals(animal.name));
+            ClassicAssert.IsTrue(1.Equals(animal.id));
+            ClassicAssert.IsTrue("Dog".Equals(animal.name));
 
             animal = animals[1];
-            Assert.IsTrue(2.Equals(animal.id));
-            Assert.IsTrue("The \"Mr\"Cat".Equals(animal.name));
+            ClassicAssert.IsTrue(2.Equals(animal.id));
+            ClassicAssert.IsTrue("The \"Mr\"Cat".Equals(animal.name));
 
             animal = animals[2];
-            Assert.IsTrue(399.Equals(animal.id));
-            Assert.IsTrue("Fish,Blue".Equals(animal.name));
+            ClassicAssert.IsTrue(399.Equals(animal.id));
+            ClassicAssert.IsTrue("Fish,Blue".Equals(animal.name));
 
             animal = animals[3];
-            Assert.IsTrue(412.Equals(animal.id));
-            Assert.IsTrue("Heavy Bird".Equals(animal.name));
+            ClassicAssert.IsTrue(412.Equals(animal.id));
+            ClassicAssert.IsTrue("Heavy Bird".Equals(animal.name));
         }
         #endregion
 
@@ -610,31 +611,31 @@ namespace LunarParserTests
             var date = new DateTime(2017, 11, 29, 10, 30, 0);
 
             var root = DataNode.CreateObject("test");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             root.AddField("first", date);
             root.AddField("second", date.ToString());
             root.AddField("third", "2017-11-29T10:30:00.000Z");
 
-            Assert.IsTrue(root.ChildCount == 3);
+            ClassicAssert.IsTrue(root.ChildCount == 3);
 
             var xml = XMLWriter.WriteToString(root);
-            Assert.IsFalse(string.IsNullOrEmpty(xml));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(xml));
 
             root = XMLReader.ReadFromString(xml);
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var test = root.GetNodeByName("test");
-            Assert.IsTrue("test".Equals(test.Name));
+            ClassicAssert.IsTrue("test".Equals(test.Name));
 
             var first = test.GetDateTime("first");
-            Assert.IsTrue(first.Equals(date));
+            ClassicAssert.IsTrue(first.Equals(date));
 
             var second = test.GetDateTime("second");
-            Assert.IsTrue(second.Equals(date));
+            ClassicAssert.IsTrue(second.Equals(date));
 
             var third = test.GetDateTime("third");
-            Assert.IsTrue(third.Equals(date));
+            ClassicAssert.IsTrue(third.Equals(date));
         }
 
         private struct Color
@@ -659,31 +660,31 @@ namespace LunarParserTests
             var color = new Color(128, 200, 64, 255);
 
             var root = DataNode.CreateObject("test");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var obj = color.ToDataNode();
-            Assert.IsTrue(obj.ChildCount == 4);
+            ClassicAssert.IsTrue(obj.ChildCount == 4);
 
             root.AddNode(obj);
 
-            Assert.IsTrue(root.ChildCount == 1);
+            ClassicAssert.IsTrue(root.ChildCount == 1);
 
             var xml = XMLWriter.WriteToString(root);
-            Assert.IsFalse(string.IsNullOrEmpty(xml));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(xml));
 
             root = XMLReader.ReadFromString(xml);
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var test = root.GetNodeByName("test");
-            Assert.IsTrue("test".Equals(test.Name));
+            ClassicAssert.IsTrue("test".Equals(test.Name));
 
             var content = test.GetNodeByName("color");
-            Assert.NotNull(content);
-            Assert.IsTrue(content.ChildCount == 4);
+            ClassicAssert.NotNull(content);
+            ClassicAssert.IsTrue(content.ChildCount == 4);
 
             var otherColor = content.ToObject<Color>();
 
-            Assert.IsTrue(otherColor.Equals(color));
+            ClassicAssert.IsTrue(otherColor.Equals(color));
         }
 
         [Test]
@@ -696,12 +697,12 @@ namespace LunarParserTests
             var grey = new Color(128, 128, 128, 255);
 
             var root = DataNode.CreateObject("test");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var colors = new Color[] { red, green, blue, white, grey };
             var temp = colors.ToDataNode("colors");
-            Assert.NotNull(temp);
-            Assert.IsTrue(temp.ChildCount == 5);
+            ClassicAssert.NotNull(temp);
+            ClassicAssert.IsTrue(temp.ChildCount == 5);
 
             root.AddNode(temp);
             var xml = XMLWriter.WriteToString(root);
@@ -712,13 +713,13 @@ namespace LunarParserTests
             temp = test["colors"];
 
             colors = temp.ToArray<Color>();
-            Assert.IsTrue(colors.Length == 5);
+            ClassicAssert.IsTrue(colors.Length == 5);
 
-            Assert.IsTrue(colors[0].Equals(red));
-            Assert.IsTrue(colors[1].Equals(green));
-            Assert.IsTrue(colors[2].Equals(blue));
-            Assert.IsTrue(colors[3].Equals(white));
-            Assert.IsTrue(colors[4].Equals(grey));
+            ClassicAssert.IsTrue(colors[0].Equals(red));
+            ClassicAssert.IsTrue(colors[1].Equals(green));
+            ClassicAssert.IsTrue(colors[2].Equals(blue));
+            ClassicAssert.IsTrue(colors[3].Equals(white));
+            ClassicAssert.IsTrue(colors[4].Equals(grey));
         }
 
         private struct ColorGroup
@@ -741,47 +742,47 @@ namespace LunarParserTests
             var cgroup = new ColorGroup(color1, color2);
 
             var root = DataNode.CreateObject("test");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var obj = cgroup.ToDataNode();
-            Assert.IsTrue(obj.ChildCount == 2);
+            ClassicAssert.IsTrue(obj.ChildCount == 2);
 
             root.AddNode(obj);
 
-            Assert.IsTrue(root.ChildCount == 1);
+            ClassicAssert.IsTrue(root.ChildCount == 1);
 
             var xml = XMLWriter.WriteToString(root);
-            Assert.IsFalse(string.IsNullOrEmpty(xml));
+            ClassicAssert.IsFalse(string.IsNullOrEmpty(xml));
 
             root = XMLReader.ReadFromString(xml);
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
 
             var test = root.GetNodeByName("test");
-            Assert.IsTrue("test".Equals(test.Name));
+            ClassicAssert.IsTrue("test".Equals(test.Name));
 
             var content = test.GetNodeByName("colorgroup");
-            Assert.NotNull(content);
-            Assert.IsTrue(content.ChildCount == 2);
+            ClassicAssert.NotNull(content);
+            ClassicAssert.IsTrue(content.ChildCount == 2);
 
             var otherGroup = content.ToObject<ColorGroup>();
 
-            Assert.IsTrue(otherGroup.foreground.Equals(cgroup.foreground));
-            Assert.IsTrue(otherGroup.background.Equals(cgroup.background));
+            ClassicAssert.IsTrue(otherGroup.foreground.Equals(cgroup.foreground));
+            ClassicAssert.IsTrue(otherGroup.background.Equals(cgroup.background));
         }
 
         [Test]
         public void TestFindNodes()
         {
             var root = JSONReader.ReadFromString("{\"root\": { \"number\": 3.14159, \"check\":true, \"item\": {\"base\": \"found me\"} } }");
-            Assert.NotNull(root);
+            ClassicAssert.NotNull(root);
             var msg = root["root"];
-            Assert.NotNull(msg);
+            ClassicAssert.NotNull(msg);
 
             // alternate way
             var child = root.FindNode("base");
-            Assert.NotNull(child);
-            Assert.AreEqual("base", child.Name);
-            Assert.AreEqual("found me", child.Value);
+            ClassicAssert.NotNull(child);
+            ClassicAssert.AreEqual("base", child.Name);
+            ClassicAssert.AreEqual("found me", child.Value);
         }
 
         [Test]
@@ -794,13 +795,13 @@ namespace LunarParserTests
             DataFormat format;
 
             format = DataFormats.DetectFormat(xml);
-            Assert.IsTrue(format.Equals(DataFormat.XML));
+            ClassicAssert.IsTrue(format.Equals(DataFormat.XML));
 
             format = DataFormats.DetectFormat(json);
-            Assert.IsTrue(format.Equals(DataFormat.JSON));
+            ClassicAssert.IsTrue(format.Equals(DataFormat.JSON));
 
             format = DataFormats.DetectFormat(yaml);
-            Assert.IsTrue(format.Equals(DataFormat.YAML));
+            ClassicAssert.IsTrue(format.Equals(DataFormat.YAML));
         }
 
         public enum AnswerKind
@@ -818,10 +819,10 @@ namespace LunarParserTests
             root.AddField("Other", "1");
 
             var answer = root.GetEnum<AnswerKind>("Answer");
-            Assert.IsTrue(answer == AnswerKind.Maybe);
+            ClassicAssert.IsTrue(answer == AnswerKind.Maybe);
 
             var other = root.GetEnum<AnswerKind>("Other");
-            Assert.IsTrue(other == AnswerKind.No);
+            ClassicAssert.IsTrue(other == AnswerKind.No);
         }
 
         [Test]
@@ -837,28 +838,28 @@ namespace LunarParserTests
             string s;
 
             s = root.GetString("dog");
-            Assert.IsTrue(s == dogName);
+            ClassicAssert.IsTrue(s == dogName);
 
             s = root["dog"].Value;
-            Assert.IsTrue(s == dogName);
+            ClassicAssert.IsTrue(s == dogName);
 
             s = root[0].Value;
-            Assert.IsTrue(s == dogName);
+            ClassicAssert.IsTrue(s == dogName);
 
             s = root[0].AsString();
-            Assert.IsTrue(s == dogName);
+            ClassicAssert.IsTrue(s == dogName);
 
             s = root.GetString("cat");
-            Assert.IsTrue(s == catName);
+            ClassicAssert.IsTrue(s == catName);
 
             s = root["cat"].Value;
-            Assert.IsTrue(s == catName);
+            ClassicAssert.IsTrue(s == catName);
 
             s = root[1].Value;
-            Assert.IsTrue(s == catName);
+            ClassicAssert.IsTrue(s == catName);
 
             s = root[1].AsString();
-            Assert.IsTrue(s == catName);
+            ClassicAssert.IsTrue(s == catName);
         }
 
         [Test]
@@ -873,37 +874,37 @@ namespace LunarParserTests
             var json = JSONWriter.WriteToString(temp);
             var root = JSONReader.ReadFromString(json);
             root = root["root"];
-            Assert.IsNotNull(root);
+            ClassicAssert.IsNotNull(root);
 
-            Assert.IsTrue(root["a"].AsInt64() == 123);
-            Assert.IsTrue(root.GetInt64("a") == 123);
+            ClassicAssert.IsTrue(root["a"].AsInt64() == 123);
+            ClassicAssert.IsTrue(root.GetInt64("a") == 123);
             
-            Assert.IsTrue(root["a"].AsUInt32() == 123);
-            Assert.IsTrue(root.GetUInt32("a") == 123);
+            ClassicAssert.IsTrue(root["a"].AsUInt32() == 123);
+            ClassicAssert.IsTrue(root.GetUInt32("a") == 123);
 
-            Assert.IsTrue(root["a"].AsInt32() == 123);
-            Assert.IsTrue(root.GetInt32("a") == 123);
+            ClassicAssert.IsTrue(root["a"].AsInt32() == 123);
+            ClassicAssert.IsTrue(root.GetInt32("a") == 123);
 
-            Assert.IsTrue(root["a"].AsByte() == 123);
-            Assert.IsTrue(root.GetByte("a") == 123);
+            ClassicAssert.IsTrue(root["a"].AsByte() == 123);
+            ClassicAssert.IsTrue(root.GetByte("a") == 123);
 
-            Assert.IsTrue(root["a"].AsSByte() == 123);
-            Assert.IsTrue(root.GetSByte("a") == 123);
+            ClassicAssert.IsTrue(root["a"].AsSByte() == 123);
+            ClassicAssert.IsTrue(root.GetSByte("a") == 123);
 
-            Assert.IsTrue(root["f"].AsFloat() == 123.456f);
-            Assert.IsTrue(root.GetFloat("f") == 123.456f);
+            ClassicAssert.IsTrue(root["f"].AsFloat() == 123.456f);
+            ClassicAssert.IsTrue(root.GetFloat("f") == 123.456f);
 
-            Assert.IsTrue(root["d"].AsDecimal() == 0.00000765m);
-            Assert.IsTrue(root.GetDecimal("d") == 0.00000765m);
+            ClassicAssert.IsTrue(root["d"].AsDecimal() == 0.00000765m);
+            ClassicAssert.IsTrue(root.GetDecimal("d") == 0.00000765m);
 
-            Assert.IsTrue(root["f"].AsDouble() == 123.456);
-            Assert.IsTrue(root.GetDouble("f") == 123.456);
+            ClassicAssert.IsTrue(root["f"].AsDouble() == 123.456);
+            ClassicAssert.IsTrue(root.GetDouble("f") == 123.456);
 
-            Assert.IsTrue(root["b"].AsBool() );
-            Assert.IsTrue(root.GetBool("b"));
+            ClassicAssert.IsTrue(root["b"].AsBool() );
+            ClassicAssert.IsTrue(root.GetBool("b"));
 
-            Assert.IsTrue(root["f"].AsString() == "123.456");
-            Assert.IsTrue(root.GetString("f") == "123.456");
+            ClassicAssert.IsTrue(root["f"].AsString() == "123.456");
+            ClassicAssert.IsTrue(root.GetString("f") == "123.456");
         }
 
         [Test]
@@ -917,24 +918,24 @@ namespace LunarParserTests
             string s;
 
             s = root.GetString("maybe", "no");
-            Assert.IsTrue(s == "yes");
+            ClassicAssert.IsTrue(s == "yes");
 
             s = root.GetString("never", "no");
-            Assert.IsTrue(s == "no");
+            ClassicAssert.IsTrue(s == "no");
 
             bool b;
 
             b = root.GetBool("other");
-            Assert.IsTrue(b);
+            ClassicAssert.IsTrue(b);
 
             b = root.GetBool("missing");
-            Assert.IsFalse(b);
+            ClassicAssert.IsFalse(b);
 
             b = root.GetBool("missing", true);
-            Assert.IsTrue(b);
+            ClassicAssert.IsTrue(b);
 
             b = root.GetBool("something");
-            Assert.IsFalse(b);
+            ClassicAssert.IsFalse(b);
         }
 
         [Test]
@@ -945,18 +946,18 @@ namespace LunarParserTests
             root.AddValue("second");
             root.AddField(null, "third");
 
-            Assert.IsTrue(root.ChildCount == 3);
+            ClassicAssert.IsTrue(root.ChildCount == 3);
 
             string s;
 
             s = root.GetNodeByIndex(0).AsString();
-            Assert.IsTrue(s.Equals("first"));
+            ClassicAssert.IsTrue(s.Equals("first"));
 
             s = root.GetNodeByIndex(1).AsString();
-            Assert.IsTrue(s.Equals("second"));
+            ClassicAssert.IsTrue(s.Equals("second"));
 
             s = root.GetNodeByIndex(2).AsString();
-            Assert.IsTrue(s.Equals("third"));
+            ClassicAssert.IsTrue(s.Equals("third"));
         }
 
         [Test]
@@ -967,16 +968,16 @@ namespace LunarParserTests
             root.AddField("number", "4");
             root.AddField("bool", true);
 
-            Assert.IsTrue(root.ChildCount == 3);
+            ClassicAssert.IsTrue(root.ChildCount == 3);
 
             var s = root.GetObject<string>("hello", "");
-            Assert.IsTrue(s.Equals("world"));
+            ClassicAssert.IsTrue(s.Equals("world"));
 
             var n = root.GetObject<int>("number", 0);
-            Assert.IsTrue(n == 4);
+            ClassicAssert.IsTrue(n == 4);
 
             var b = root.GetObject<bool>("bool", false);
-            Assert.IsTrue(b == true);
+            ClassicAssert.IsTrue(b == true);
         }
 
         [Test]
@@ -990,23 +991,23 @@ namespace LunarParserTests
 
             var root = dic.FromDictionary("temp");
 
-            Assert.IsTrue(root.ChildCount == dic.Count);
+            ClassicAssert.IsTrue(root.ChildCount == dic.Count);
 
             foreach (var entry in dic)
             {
                 var val = root.GetInt32(entry.Key);
 
-                Assert.IsTrue(val == entry.Value);
+                ClassicAssert.IsTrue(val == entry.Value);
             }
 
             var other = root.ToDictionary<int>("temp");
-            Assert.IsTrue(other.Count == dic.Count);
+            ClassicAssert.IsTrue(other.Count == dic.Count);
 
             foreach (var entry in dic)
             {
                 var val = other[entry.Key];
 
-                Assert.IsTrue(val == entry.Value);
+                ClassicAssert.IsTrue(val == entry.Value);
             }
         }
 
@@ -1021,24 +1022,24 @@ namespace LunarParserTests
 
             var root = set.FromHashSet<string>("temp");
 
-            Assert.IsTrue(root.ChildCount == set.Count);
+            ClassicAssert.IsTrue(root.ChildCount == set.Count);
 
             foreach (var entry in set)
             {
-                Assert.IsTrue(root.Children.Any(x => x.Value == entry));
+                ClassicAssert.IsTrue(root.Children.Any(x => x.Value == entry));
             }
 
             var other = root.ToHashSet<string>();
-            Assert.IsTrue(other.Count == set.Count);
+            ClassicAssert.IsTrue(other.Count == set.Count);
 
             foreach (var entry in set)
             {
-                Assert.IsTrue(other.Contains(entry));
+                ClassicAssert.IsTrue(other.Contains(entry));
             }
 
             var node = root.GetNodeByIndex(1);
-            Assert.IsTrue(root.RemoveNode(node));
-            Assert.IsTrue(root.ChildCount == set.Count - 1);
+            ClassicAssert.IsTrue(root.RemoveNode(node));
+            ClassicAssert.IsTrue(root.ChildCount == set.Count - 1);
         }
 
         #endregion
