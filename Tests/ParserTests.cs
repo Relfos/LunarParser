@@ -107,7 +107,7 @@ namespace LunarParserTests
             root.AddNode(temp);
 
             var xml = XMLWriter.WriteToString(root);
-            var expected = "<data>\n\t<entry name=\"xx\" />\n</data>\n";
+            var expected = "<data>\n\t<entry name=\"xx\"/>\n</data>\n";
             expected = expected.Replace("\n", Environment.NewLine);
             ClassicAssert.IsTrue(xml == expected);
 
