@@ -68,7 +68,7 @@ namespace LunarLabs.Parser.CSV
                         {
                             if (!isEscaped && (c == ',' || c == '\n'))
                             {
-                                if (fieldIndex < header.Count)
+                                if (fieldIndex < header.Count && currentNode != null)
                                 {
                                     currentNode.AddField(header[fieldIndex], content.ToString());
                                 }
