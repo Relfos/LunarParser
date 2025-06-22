@@ -61,12 +61,17 @@ namespace LunarLabs.Parser.XML
                 buffer.Append('/');
             }
             buffer.Append('>');
-            buffer.AppendLine();
 
-            if (finished) return;
+            if (finished)
+            {
+                buffer.AppendLine();
+                return;
+            }
 
             if (node.Children.Any())
             {
+                buffer.AppendLine();
+
                 foreach (DataNode child in node.Children)
                 {
                     if (!expand && !child.Children.Any())
@@ -90,9 +95,12 @@ namespace LunarLabs.Parser.XML
                 buffer.Append(EscapeXML(node.Value, escape));
             }
 
-            for (int i = 0; i < tabs; i++)
+            if (node.Children.Any())
             {
-                buffer.Append('\t');
+                for (int i = 0; i < tabs; i++)
+                {
+                    buffer.Append('\t');
+                }
             }
 
             buffer.Append('<');
