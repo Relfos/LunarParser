@@ -91,7 +91,8 @@ namespace LunarLabs.Parser.XML
                     }
                 }*/
             }
-            else
+            
+            if (node.Value != null)
             {
                 buffer.Append(EscapeXML(node.Value, escape));
             }
