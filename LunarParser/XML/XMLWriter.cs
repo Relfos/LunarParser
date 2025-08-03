@@ -82,13 +82,14 @@ namespace LunarLabs.Parser.XML
                     WriteNode(buffer, child, tabs + 1, expand, escape, allowEmptyNames);
                 }
 
+                /* NOTE removed since some cases like Tiled .tmx files use both value and child in same node
                 if (node.Value != null)
                 {
                     if (node.Value.Trim().Length > 0)
                     {
                         throw new Exception("Nodes with values cannot have child nodes");
                     }
-                }
+                }*/
             }
             else
             {
