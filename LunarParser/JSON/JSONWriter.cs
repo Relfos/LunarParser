@@ -11,7 +11,7 @@ namespace LunarLabs.Parser.JSON
             if (node.Name != null && (parent == null || parent.Kind != NodeKind.Array))
             {
                 sb.Append('"');
-                sb.Append(node.Name);
+                sb.Append(EscapeJSON(node.Name));
                 sb.Append("\" : ");
             }
 
